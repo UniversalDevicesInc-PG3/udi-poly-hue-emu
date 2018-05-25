@@ -1,0 +1,5 @@
+# controller
+ND-controller-NAME = Hue Emulator Controller
+CMD-ctl-REFRESH-NAME = Refresh
+CMD-ctl-UPDATE_PROFILE-NAME = Update Profile
+ST-ctl-ST-NAME = NodeServer Online
