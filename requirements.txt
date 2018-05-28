@@ -1,1 +1,5 @@
-PyISY
+
+# Can't use released PyISY with 5.x firmware
+# PyISY
+
+VarEvents

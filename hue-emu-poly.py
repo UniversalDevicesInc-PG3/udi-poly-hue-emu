@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
-This is a NodeServer template for Polyglot v2 written in Python2/3
+This is a NodeServer to Emulate a Hue Hub for Polyglot v2 written in Python3
 by JimBo (Jim Searle) jimboca3@gmail.com
 """
 import polyinterface
 import sys
 import time
+from ISYHueEmulator import ISYHueEmulator
+from traceback import format_exception
+from threading import Thread,Event
 
 LOGGER = polyinterface.LOGGER
 
@@ -16,9 +19,9 @@ class Controller(polyinterface.Controller):
         self.name = 'Hue Emulator Controller'
 
     def start(self):
-        LOGGER.info('Started HueEmulator')
+        LOGGER.info('Starting HueEmulator Controller')
         self.check_params()
-        self.refresh()
+        self.connect()
 
     def shortPoll(self):
         pass
@@ -29,14 +32,33 @@ class Controller(polyinterface.Controller):
     def query(self):
         pass
 
-    def refresh(self, *args, **kwargs):
-        pass
-
     def delete(self):
         LOGGER.info('Oh God I\'m being deleted. Nooooooooooooooooooooooooooooooooooooooooo.')
 
     def stop(self):
         LOGGER.debug('NodeServer stopped.')
+
+    def refresh(self, *args, **kwargs):
+        pass
+
+    def connect(self):
+        LOGGER.info('Starting thread if ISYHueEmulator')
+        self.client_status = "init"
+        self.event = Event()
+        self.thread = Thread(target=self._connect)
+        self.thread.daemon = True
+        return self.thread.start()
+
+    def _connect(self):
+        # TODO: Can we get the ISY info from Polyglot?  If not, then document these
+        self.isy_hue_emu = ISYHueEmulator(
+            "192.168.86.79", # FIXME
+            self.polyConfig['customParams']['port'],
+            self.polyConfig['customParams']['isy_host'],
+            self.polyConfig['customParams']['isy_port'],
+            self.polyConfig['customParams']['isy_user'],
+            self.polyConfig['customParams']['isy_password']
+            )
 
     def check_params(self):
         """
@@ -70,6 +92,7 @@ class Controller(polyinterface.Controller):
         'UPDATE_PROFILE': update_profile,
     }
     drivers = [{'driver': 'ST', 'value': 1, 'uom': 2}]
+
 
 if __name__ == "__main__":
     try:
