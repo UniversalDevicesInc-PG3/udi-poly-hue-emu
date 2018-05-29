@@ -9,6 +9,7 @@ import time
 from ISYHueEmulator import ISYHueEmulator
 from traceback import format_exception
 from threading import Thread,Event
+from hue_emu_funcs import get_network_ip
 
 LOGGER = polyinterface.LOGGER
 
@@ -17,6 +18,7 @@ class Controller(polyinterface.Controller):
     def __init__(self, polyglot):
         super(Controller, self).__init__(polyglot)
         self.name = 'Hue Emulator Controller'
+        self.isy_hue_emu = False
 
     def start(self):
         LOGGER.info('Starting HueEmulator Controller')
@@ -52,7 +54,7 @@ class Controller(polyinterface.Controller):
     def _connect(self):
         # TODO: Can we get the ISY info from Polyglot?  If not, then document these
         self.isy_hue_emu = ISYHueEmulator(
-            "192.168.86.79", # FIXME
+            get_network_ip("8.8.8.8"),
             self.polyConfig['customParams']['port'],
             self.polyConfig['customParams']['isy_host'],
             self.polyConfig['customParams']['isy_port'],
@@ -81,15 +83,22 @@ class Controller(polyinterface.Controller):
         #if self.user == default_user or self.password == default_password:
         #    self.addNotice("Please set proper user and password in configuration page, and restart this nodeserver")
 
-    def update_profile(self,command):
+    def cmd_update_profile(self,command):
         LOGGER.info('update_profile:')
         st = self.poly.installprofile()
         return st
 
+    def cmd_refresh(self,command):
+        LOGGER.info('refresh:')
+        if self.isy_hue_emu is False:
+            LOGGER.error('No Hue Emulator?')
+            return
+        self.isy_hue_emu.refresh()
+
     id = 'controller'
     commands = {
-        'REFRESH': refresh,
-        'UPDATE_PROFILE': update_profile,
+        'REFRESH': cmd_refresh,
+        'UPDATE_PROFILE': cmd_update_profile,
     }
     drivers = [{'driver': 'ST', 'value': 1, 'uom': 2}]
 

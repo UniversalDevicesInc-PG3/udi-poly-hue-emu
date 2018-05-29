@@ -74,14 +74,11 @@ class ISYHueEmulator():
             raise ValueError("See Log")
         hueUpnp_config.devices = self.pdevices
         hueUpnp_config.logger  = LOGGER
-        if self.host is None:
-                hueUpnp_config.standard['IP']        = self.parent.config['this_host']['host']
-        else:
-                hueUpnp_config.standard['IP']        = self.host
-        hueUpnp_config.standard['HTTP_PORT'] = self.port
-        hueUpnp_config.standard['DEBUG'] = True
+        hueUpnp_config.standard['IP']        = self.host
+        hueUpnp_config.standard['PORT']      = self.port
+        hueUpnp_config.standard['DEBUG']     = True
         self.hue_upnp = hue_upnp(hueUpnp_config)
-        self.hue_upnp.start_listener()
+        self.hue_upnp.run()
         self.listening = True
 
     def insert_device(self,device):
