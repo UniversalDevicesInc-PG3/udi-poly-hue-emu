@@ -45,37 +45,35 @@ class Controller(polyinterface.Controller):
 
     def connect(self):
         LOGGER.info('Starting thread if ISYHueEmulator')
-        self.client_status = "init"
-        self.event = Event()
-        self.thread = Thread(target=self._connect)
-        self.thread.daemon = True
-        return self.thread.start()
-
-    def _connect(self):
         # TODO: Can we get the ISY info from Polyglot?  If not, then document these
         self.isy_hue_emu = ISYHueEmulator(
             get_network_ip("8.8.8.8"),
-            self.polyConfig['customParams']['port'],
+            self.polyConfig['customParams']['hue_port'],
             self.polyConfig['customParams']['isy_host'],
             self.polyConfig['customParams']['isy_port'],
             self.polyConfig['customParams']['isy_user'],
             self.polyConfig['customParams']['isy_password']
             )
+        self.client_status = "init"
+        self.event = Event()
+        self.thread = Thread(target=self.isy_hue_emu.connect)
+        self.thread.daemon = True
+        return self.thread.start()
 
     def check_params(self):
         """
         This is an example if using custom Params for user and password and an example with a Dictionary
         """
-        default_port = "80"
-        if 'port' in self.polyConfig['customParams']:
-            self.port = self.polyConfig['customParams']['port']
+        default_port = "8080"
+        if 'hue_port' in self.polyConfig['customParams']:
+            self.hue_port = self.polyConfig['customParams']['hue_port']
         else:
-            self.port = default_port
-            LOGGER.info('check_params: port not defined in customParams, set to default {}'.format(self.port))
+            self.hue_port = default_port
+            LOGGER.info('check_params: hue_port not defined in customParams, set to default {}'.format(self.hue_port))
             st = False
 
         # Make sure they are in the params
-        self.addCustomParam({'port': self.port})
+        self.addCustomParam({'hue_port': self.hue_port})
 
         # Remove all existing notices
         self.removeNoticesAll()

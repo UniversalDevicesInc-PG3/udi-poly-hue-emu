@@ -1,5 +1,7 @@
 
 
+import json
+
 # Local version of PyISY which supports ISY 5.x
 import sys
 sys.path.insert(0,"PyISY")
@@ -24,14 +26,44 @@ class ISYHueEmulator():
         self.pdevices  = []
         self.lpfx = 'pyhue:'
         self.listening = False
-        self.connect()
+        self.config_file = 'config.json'
 
     def connect(self):
         # FIXME: How to set different logger level for Events?
         self.isy = PyISY.ISY(self.isy_host, self.isy_port, self.isy_user, self.isy_password, False, "1.1", LOGGER)
-        LOGGER.info(" ISY Connected: " + str(self.isy.connected))
-        self.refresh()
+        self.l_info('connect',' ISY Connected: ' + str(self.isy.connected))
+        if not self.isy.connected:
+            return False
+        if not self.refresh():
+            return False
+        self.l_info('connect','Default config: {}'.format(hueUpnp_config))
+        self.load_config()
+        hueUpnp_config.devices = self.pdevices
+        hueUpnp_config.logger  = LOGGER
+        hueUpnp_config.standard['IP']        = self.host
+        hueUpnp_config.standard['PORT']      = self.port
+        hueUpnp_config.standard['DEBUG']     = True
+        self.hue_upnp = hue_upnp(hueUpnp_config)
+        self.save_config()
+        self.hue_upnp.run()
+        self.listening = True
         #self.isy.auto_update = True
+
+    def save_config(self):
+        data = { 'devices': {}, 'config': hueUpnp_config.standard }
+        i = 0
+        for device in self.pdevices:
+            data['devices'][i] = {'name': device.name}
+            i += 1
+        with open(self.config_file, 'w') as outfile:
+            json.dump(data, outfile, ensure_ascii=False, indent=4, sort_keys=True)
+
+    def load_config(self):
+        data = { 'devices': {}, 'config': hueUpnp_config.standard }
+        if os.path.exists(self.config_file):
+            with open(self.config_file, "r") as ifile:
+                data = json.load(read_file)
+        self.config_data = data
 
     def refresh(self):
         errors = 0
@@ -42,7 +74,7 @@ class ISYHueEmulator():
                 mnode = self.isy.nodes[child[2]]
                 spoken = mnode.spoken
                 if spoken is not None:
-                    # TODO: Should this be a comman seperate list of which echo will respond?
+                    # TODO: Should this be a comma seperatd list of which echo will respond?
                     # TODO: Or should that be part of notes?
                     if spoken == '1':
                         spoken = mnode.name
@@ -72,20 +104,13 @@ class ISYHueEmulator():
         #errors += 1
         if errors > 0:
             raise ValueError("See Log")
-        hueUpnp_config.devices = self.pdevices
-        hueUpnp_config.logger  = LOGGER
-        hueUpnp_config.standard['IP']        = self.host
-        hueUpnp_config.standard['PORT']      = self.port
-        hueUpnp_config.standard['DEBUG']     = True
-        self.hue_upnp = hue_upnp(hueUpnp_config)
-        self.hue_upnp.run()
-        self.listening = True
+        return True
 
     def insert_device(self,device):
         # TODO: See if we have an id with this name and use it
 	    # TODO: This is so ID's never change.
-        device.bid = len(self.pdevices)
-        self.pdevices.insert(device.bid,device)
+        device.id = len(self.pdevices)
+        self.pdevices.insert(device.id,device)
 
     def add_device(self,config):
         self.l_info('add_device',str(config))
@@ -106,30 +131,22 @@ class ISYHueEmulator():
                 raise ValueError("Unknown device name or address '" + dname + "'")
             else:
                 self.insert_device([ config['name'], device_isy_onoff(self,node)])
-        elif config['type'] == 'Maker':
-            #if self.config in 'ifttt':
-            #    if not self.config['ifttt'] in 'maker_secret_key':
-            #        raise ValueError("Missing maker_secret_key in ifttt from config file")
-            #else:
-            #    raise ValueError("Missing ifttt with maker_secret_key in config file")
-
-            self.insert_device([ config['name'], device_maker_onoff(self,config['on_event'],config['off_event'])])
 
         else:
             raise ValueError("Unknown PyHue device type " + config['type'])
 
 
     def l_info(self, name, string):
-        LOGGER.info("ISYHueEm:%s: %s" %  (name,string))
+        LOGGER.info("ISYHueEmu:%s: %s" %  (name,string))
 
     def l_error(self, name, string, exc_info=False):
-        LOGGER.error("ISYHueEm:%s: %s" % (name,string), exc_info=exc_info)
+        LOGGER.error("ISYHueEmu:%s: %s" % (name,string), exc_info=exc_info)
 
     def l_warning(self, name, string):
-        LOGGER.warning("ISYHueEm:%s: %s" % (name,string))
+        LOGGER.warning("ISYHueEmu:%s: %s" % (name,string))
 
     def l_debug(self, name, string):
-        LOGGER.debug("ISYHueEm:%s: %s" % (name,string))
+        LOGGER.debug("ISYHueEmu:%s: %s" % (name,string))
 
 #
 # This is the hue_upnp object for an ISY device
@@ -138,14 +155,15 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
         global CONFIG
 
         def __init__(self, parent, name, node, scene):
-                self.parent  = parent
-                self.hid     = 0
                 self.name    = name
+                self.parent  = parent
                 self.node    = node
                 self.scene   = scene
+                self.xy      = False
+                self.ct      = False
                 node.status.subscribe('changed', self.get_all_changed)
-                super(pyhue_isy_node_handler,self).__init__(name)
                 self.parent.l_info('pyhue_isy_node_handler.__init__','name=%s node=%s scene=%s' % (self.name, self.node, self.scene));
+                super(pyhue_isy_node_handler,self).__init__(name)
 
         def get_all_changed(self,e):
                 self.parent.l_info('pyhue:isy_node_handler.get_all_changed','%s e=%s' % (self.name, str(e)));
@@ -186,7 +204,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
         def set_bri(self,value):
                 self.parent.l_info('pyhue:isy_handler.set_bri','%s on val=%d' % (self.name, value));
                 # Only set directly on the node when it's dimmable and value is not 0 or 254
-		# TODO: node.dimmable broken in current PyISY?
+		        # TODO: node.dimmable broken in current PyISY?
                 if value > 0 and value < 254:
                         # val=bri does not work?
                         ret = self.node.on(value)
