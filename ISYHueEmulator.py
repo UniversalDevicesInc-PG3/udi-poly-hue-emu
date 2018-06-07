@@ -1,6 +1,6 @@
 
 
-import json
+import json,os
 
 # Local version of PyISY which supports ISY 5.x
 import sys

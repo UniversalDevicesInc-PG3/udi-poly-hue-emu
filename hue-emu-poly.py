@@ -48,11 +48,11 @@ class Controller(polyinterface.Controller):
         # TODO: Can we get the ISY info from Polyglot?  If not, then document these
         self.isy_hue_emu = ISYHueEmulator(
             get_network_ip("8.8.8.8"),
-            self.polyConfig['customParams']['hue_port'],
-            self.polyConfig['customParams']['isy_host'],
-            self.polyConfig['customParams']['isy_port'],
-            self.polyConfig['customParams']['isy_user'],
-            self.polyConfig['customParams']['isy_password']
+            self.hue_port,
+            self.isy_host,
+            self.isy_port,
+            self.isy_user,
+            self.isy_password
             )
         self.client_status = "init"
         self.event = Event()
@@ -72,8 +72,39 @@ class Controller(polyinterface.Controller):
             LOGGER.info('check_params: hue_port not defined in customParams, set to default {}'.format(self.hue_port))
             st = False
 
+        default = "192.168.1.xx"
+        if 'isy_host' in self.polyConfig['customParams']:
+            self.isy_host = self.polyConfig['customParams']['isy_host']
+        else:
+            self.isy_host = default
+            LOGGER.info('check_params: isy_host not defined in customParams, set to default {}'.format(default))
+            st = False
+
+        default = "80"
+        if 'isy_port' in self.polyConfig['customParams']:
+            self.isy_port = self.polyConfig['customParams']['isy_port']
+        else:
+            self.isy_port = default
+            LOGGER.info('check_params: isy_port not defined in customParams, set to default {}'.format(default))
+            st = False
+
+        default = "admin"
+        if 'isy_user' in self.polyConfig['customParams']:
+            self.isy_user = self.polyConfig['customParams']['isy_user']
+        else:
+            self.isy_user = default
+            LOGGER.info('check_params: isy_user not defined in customParams, set to default {}'.format(default))
+            st = False
+
+        if 'isy_password' in self.polyConfig['customParams']:
+            self.isy_password = self.polyConfig['customParams']['isy_password']
+        else:
+            self.isy_password = default
+            LOGGER.info('check_params: isy_password not defined in customParams, set to default {}'.format(default))
+            st = False
+
         # Make sure they are in the params
-        self.addCustomParam({'hue_port': self.hue_port})
+        self.addCustomParam({'hue_port': self.hue_port, 'isy_host': self.isy_host, 'isy_port': self.isy_port, 'isy_user': self.isy_user, 'isy_password': self.isy_password})
 
         # Remove all existing notices
         self.removeNoticesAll()
