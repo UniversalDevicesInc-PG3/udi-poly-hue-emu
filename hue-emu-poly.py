@@ -52,7 +52,7 @@ class Controller(polyinterface.Controller):
             self.isy_host,
             self.isy_port,
             self.isy_user,
-            self.isy_password
+            self.isy_password,
             )
         self.client_status = "init"
         self.event = Event()
