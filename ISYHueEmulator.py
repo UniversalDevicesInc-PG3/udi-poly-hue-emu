@@ -1,4 +1,9 @@
-
+#
+# The ISYHueEmulator object.
+#
+# It is contained in a seperate object because the intention was to allow running
+# just this file to test, but haven't done that yet...
+#
 
 import json,os
 
@@ -7,6 +12,7 @@ import sys
 sys.path.insert(0,"PyISY")
 import PyISY
 
+# Local version of hue-upnp which works with Python3
 sys.path.insert(0,"hue-upnp")
 from hueUpnp import hue_upnp,hue_upnp_super_handler
 # This loads the default hue-upnp config which we will use as a starting point.
@@ -17,16 +23,17 @@ LOGGER = polyinterface.LOGGER
 
 class ISYHueEmulator():
     def __init__(self,host,port,isy_host,isy_port,isy_user,isy_password):
-        self.host     = host
-        self.port     = port
-        self.isy_host = isy_host
-        self.isy_port = isy_port
-        self.isy_user = isy_user
+        self.host         = host
+        self.port         = port
+        self.isy_host     = isy_host
+        self.isy_port     = isy_port
+        self.isy_user     = isy_user
         self.isy_password = isy_password
         self.pdevices  = []
         self.lpfx = 'pyhue:'
         self.listening = False
         self.config_file = 'config.json'
+        self.load_config()
 
     def connect(self):
         # FIXME: How to set different logger level for Events?
@@ -37,7 +44,6 @@ class ISYHueEmulator():
         if not self.refresh():
             return False
         self.l_info('connect','Default config: {}'.format(hueUpnp_config))
-        self.load_config()
         hueUpnp_config.devices = self.pdevices
         hueUpnp_config.logger  = LOGGER
         hueUpnp_config.standard['IP']        = self.host
@@ -49,21 +55,24 @@ class ISYHueEmulator():
         self.listening = True
         #self.isy.auto_update = True
 
+    __config_version = 1
+
     def save_config(self):
-        data = { 'devices': {}, 'config': hueUpnp_config.standard }
-        i = 0
-        for device in self.pdevices:
-            data['devices'][i] = {'name': device.name}
-            i += 1
+        new_config = { 'devices': {}, 'config': hueUpnp_config.standard, 'version': __config_version }
+        for i, device in enumerate(self.pdevices):
+            fdev = self.in_config(device)
+            if fdev is False:
+                new_config['devices'].append({'name': device.name, 'id': device.id, 'index': i })
+        self.config = new_config
         with open(self.config_file, 'w') as outfile:
-            json.dump(data, outfile, ensure_ascii=False, indent=4, sort_keys=True)
+            json.dump(self.config, outfile, ensure_ascii=False, indent=4, sort_keys=True)
 
     def load_config(self):
-        data = { 'devices': {}, 'config': hueUpnp_config.standard }
         if os.path.exists(self.config_file):
             with open(self.config_file, "r") as ifile:
-                data = json.load(read_file)
-        self.config_data = data
+                self.config = json.load(read_file)
+        else:
+            self.config = { 'devices': {}, 'config': hueUpnp_config.standard, 'version': __config_version }
 
     def refresh(self):
         errors = 0
@@ -106,11 +115,29 @@ class ISYHueEmulator():
             raise ValueError("See Log")
         return True
 
+    def in_config(self,device):
+        # Config devices saves the id and name so we can keep the same index.
+        for item in self.config['devices']:
+            if device['id'] == item['id']:
+                self.l_info('in_config','Found id in config {}'.format(item))
+                return item
+        # Didn't find by id, try by name
+        for item in self.config['devices']:
+            if device['name'] == item['name']:
+                self.l_info('in_config','Found name in config {}'.format(item))
+                return item
+        return False
+
     def insert_device(self,device):
         # TODO: See if we have an id with this name and use it
 	    # TODO: This is so ID's never change.
-        device.id = len(self.pdevices)
-        self.pdevices.insert(device.id,device)
+        fdev = self.in_config(device)
+        if fdev is False:
+            self.l_info('insert_device','Appending device name={} id={} index={}'.format(device.name,device.id,len(self.pdevices)))
+            self.pdevices.append(device)
+        else:
+            self.l_info('insert_device','Inserting device name={} id={} index={}'.format(device.name,device.id,index))
+            self.pdevices.insert(index,device)
 
     def add_device(self,config):
         self.l_info('add_device',str(config))
@@ -158,6 +185,8 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.name    = name
                 self.parent  = parent
                 self.node    = node
+                # Used to look for device in list in case name changes.
+                self.id      = node.id
                 self.scene   = scene
                 self.xy      = False
                 self.ct      = False
