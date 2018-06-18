@@ -4,11 +4,21 @@
     <nodeDef id="controller" nls="ctl">
         <editors />
         <sts>
-			<st id="ST" editor="bool" />
-		</sts>
+		    	<st id="ST" editor="bool" />
+          <!-- Debug Mode -->
+          <st id="GV1" editor="DEBUGMODE" />
+          <!-- Listen -->
+          <st id="GV2" editor="bool" />
+    		</sts>
         <cmds>
             <sends />
             <accepts>
+              <cmd id="SET_DEBUGMODE">
+                <p id="" editor="DEBUGMODE" init="GV1" />
+              </cmd>
+              <cmd id="SET_LISTEN">
+                <p id="" editor="bool" init="GV2" />
+              </cmd>
               <cmd id="REFRESH" />
               <cmd id="UPDATE_PROFILE" />
             </accepts>

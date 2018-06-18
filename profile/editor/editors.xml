@@ -3,4 +3,8 @@
     <editor id="bool">
         <range uom="2" subset="0,1" />
     </editor>
-</editors>
+    <!-- Log Debug Mode -->
+    <editor id="DEBUGMODE">
+      <range uom="25" subset="0,10,20,30,40,50" nls="CDM" />
+    </editor>
+  </editors>

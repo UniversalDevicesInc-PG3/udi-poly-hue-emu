@@ -3,3 +3,15 @@ ND-controller-NAME = Hue Emulator Controller
 CMD-ctl-REFRESH-NAME = Refresh
 CMD-ctl-UPDATE_PROFILE-NAME = Update Profile
 ST-ctl-ST-NAME = NodeServer Online
+ST-ctl-GV1-NAME = Debug Mode
+ST-ctl-GV2-NAME = Listen
+
+CMD-SET_DEBUGMODE-NAME = Debug Level
+CDM-0 = All
+CDM-10 = Debug
+CDM-20 = Info
+CDM-30 = Warning
+CDM-40 = Error
+CDM-50 = Critical
+
+CMD-SET_LISTEN-NAME = Listen
