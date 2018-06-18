@@ -7,11 +7,11 @@ if [ -e PyISY ]; then
   echo "Removing: PyISY"
   rm -rf PyISY
 fi
-git clone https://github.com/jimboca/PyISY
+git clone https://github.com/jimboca/PyISY.git
 
 echo ""
 if [ -e hue-upnp ]; then
   echo "Removing: hue-upnp"
   rm -rf hue-upnp
 fi
-git clone https://github.com/jimboca/hue-upnp
+git clone -b python3 https://github.com/jimboca/hue-upnp.git
