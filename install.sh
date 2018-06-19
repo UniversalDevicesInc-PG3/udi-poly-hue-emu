@@ -4,10 +4,11 @@ pip3 install -r requirements.txt --user
 
 echo ""
 if [ -e PyISY ]; then
-  echo "Removing: PyISY"
+  echo "Removing: PyISY since we can use the released version now"
   rm -rf PyISY
 fi
-git clone https://github.com/jimboca/PyISY.git
+# We can use the released 1.1.0 version now.
+# git clone https://github.com/jimboca/PyISY.git
 
 echo ""
 if [ -e hue-upnp ]; then
