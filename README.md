@@ -1,6 +1,6 @@
 ![Build Status](https://travis-ci.org/jimboca/udi-poly-hue-emu.svg?branch=master)](https://travis-ci.org/jimboca/udi-poly-hue-emu)
 
-# harmony-polyglot
+# udi-poly-hue-emu
 
 This is the Hue Emulator Poly for the [Universal Devices ISY994i](https://www.universal-devices.com/residential/ISY) [Polyglot interface](http://www.universal-devices.com/developers/polyglot/docs/) with  [Polyglot V2](https://github.com/Einstein42/udi-polyglotv2)
 (c) JimBoCA aka Jim Searle
