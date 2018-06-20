@@ -33,7 +33,7 @@ IMPORTANT: Currently if you 'group device' it will not find your Spoken property
 
 ## Configuration
 
-In to 'Configuration' tab contains the default values for all Custom Configuration Parameters.
+In the 'Configuration' tab contains the default values for all Custom Configuration Parameters.
 
 * hue_port : The port used for Hue Emulator Can keep default of 8080
 * isy_host : The IP address of your ISY on the local network
