@@ -84,9 +84,7 @@ Also, in the nodeserver directory there will be a config.json that contains the 
 
 # Upgrading
 
-Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEmulator". You can answer No to the install profile question.
-
-Then restart the  nodeserver by selecting it in the Polyglot dashboard and select Control -> Restart, and watch the log to make sure everything goes well.
+Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEmulator". You can answer No to the install profile question.  Then restart the nodeserver by selecting it in the Polyglot dashboard and select Control -> Restart, and watch the log to make sure everything goes well.
 
 # Release Notes
 
