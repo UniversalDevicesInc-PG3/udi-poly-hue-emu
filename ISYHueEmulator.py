@@ -39,7 +39,7 @@ class ISYHueEmulator():
         self.config_file = 'config.json'
         self.load_config()
 
-    def connect(self):
+    def connect(self,listen):
         # FIXME: How to set different logger level for Events?
         self.isy = PyISY.ISY(self.isy_host, self.isy_port, self.isy_user, self.isy_password, False, "1.1", LOGGER)
         self.l_info('connect',' ISY Connected: ' + str(self.isy.connected))
@@ -54,7 +54,7 @@ class ISYHueEmulator():
         hueUpnp_config.standard['PORT']      = self.port
         hueUpnp_config.standard['DEBUG']     = True
         self.hue_upnp = hue_upnp(hueUpnp_config)
-        self.hue_upnp.run()
+        self.hue_upnp.run(listen=listen)
         self.listening = True
         #self.isy.auto_update = True
 

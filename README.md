@@ -88,6 +88,9 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.0.2 06/21/2018
+  - Fix initialization of listen
+  - Pull my PyISY again to help with debugging
 - 2.0.1 06/19/2018
   - Move to released PyISY 1.1.0 to fix finding scenes.
 - 2.0.0

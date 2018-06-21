@@ -26,6 +26,7 @@ class Controller(polyinterface.Controller):
         # New vesions need to force an update
         self.check_version()
         self.check_params()
+        self.set_listen(self.get_listen())
         self.set_debug_level(self.getDriver('GV1'))
         self.connect()
         self.l_info('start','done')
@@ -61,12 +62,18 @@ class Controller(polyinterface.Controller):
             )
         self.client_status = "init"
         self.event = Event()
-        self.thread = Thread(target=self.isy_hue_emu.connect)
+        self.thread = Thread(target=self._connect)
         self.thread.daemon = True
         return self.thread.start()
 
+    def _connect(self):
+        listen = True
+        if self.get_listen() == 0:
+            listen = False
+        self.thread = Thread(target=self.isy_hue_emu.connect(listen))
+
     def check_version(self):
-        current_version = 2
+        current_version = 4
         if 'cver' in self.polyConfig['customData']:
             cver = self.polyConfig['customData']['cver']
         else:
@@ -74,6 +81,7 @@ class Controller(polyinterface.Controller):
         self.l_debug("start","cver={} current_version={}".format(cver,current_version))
         if cver < current_version:
             self.l_debug("start","updating myself since cver {} < {}".format(cver,current_version))
+            st = self.poly.installprofile()
             # Force an update.
             self.addNode(self,update=True)
             self.polyConfig['customData']['cver'] = current_version
@@ -135,7 +143,7 @@ class Controller(polyinterface.Controller):
         self.removeNoticesAll()
         # Add a notice if some params don't look correct.
         if not st:
-            self.addNotice("Please parameters in configuration page and restart this nodeserver")
+            self.addNotice("Please set parameters in configuration page and restart this nodeserver")
 
     def l_info(self, name, string):
         LOGGER.info("Controller:%s: %s" %  (name,string))
@@ -176,15 +184,20 @@ class Controller(polyinterface.Controller):
         else:
             self.l_error("set_debug_level","Unknown level {}".format(level))
 
-    def set_listen(self,val):
-        self.l_info('set_listen',val)
+    def get_listen(self):
+        self.l_info('get_listen','')
+        val = self.getDriver('GV2')
         if val is None:
             val = 1
+        self.l_info('get_listen',val)
+
+    def set_listen(self,val):
         self.l_info('set_listen','Set to {}'.format(val))
-        if val == 0:
-            self.isy_hue_emu.stop_listener()
-        else:
-            self.isy_hue_emu.start_listener()
+        if self.isy_hue_emu is not False:
+            if val == 0:
+                self.isy_hue_emu.stop_listener()
+            else:
+                self.isy_hue_emu.start_listener()
         self.setDriver('GV2', val)
 
     def cmd_update_profile(self,command):
@@ -193,7 +206,7 @@ class Controller(polyinterface.Controller):
         return st
 
     def cmd_refresh(self,command):
-        LOGGER.info('refresh:')
+        self.l_info('refresh:')
         if self.isy_hue_emu is False:
             LOGGER.error('No Hue Emulator?')
             return
@@ -222,7 +235,6 @@ class Controller(polyinterface.Controller):
         {'driver': 'GV2', 'value': 0, 'uom': 2} # Listen
     ]
 
-
 if __name__ == "__main__":
     try:
         polyglot = polyinterface.Interface('HueEmulator')
@@ -246,3 +258,4 @@ if __name__ == "__main__":
         """
         Catch SIGTERM or Control-C and exit cleanly.
         """
+                                                                                                                                                                                                                                                                                                                                                                                                                                              
