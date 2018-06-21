@@ -70,6 +70,7 @@ class Controller(polyinterface.Controller):
         listen = True
         if self.get_listen() == 0:
             listen = False
+        self.l_info("_connect","listen={}".format(listen))
         self.thread = Thread(target=self.isy_hue_emu.connect(listen))
 
     def check_version(self):
@@ -190,6 +191,7 @@ class Controller(polyinterface.Controller):
         if val is None:
             val = 1
         self.l_info('get_listen',val)
+        return int(val)
 
     def set_listen(self,val):
         self.l_info('set_listen','Set to {}'.format(val))
