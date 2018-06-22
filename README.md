@@ -88,6 +88,9 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.0.3 06/21/2018
+  - Fix for when a spoken is removed
+  - Fix to PyISY for Scenes that contain a nodeserver node
 - 2.0.2 06/21/2018
   - Fix initialization of listen
   - Pull my PyISY again to help with debugging

@@ -53,7 +53,6 @@ class ISYHueEmulator():
         hueUpnp_config.standard['IP']        = self.host
         hueUpnp_config.standard['PORT']      = self.port
         hueUpnp_config.standard['DEBUG']     = True
-        self.l_info('connect','listen: {}'.format(listen))
         self.hue_upnp = hue_upnp(hueUpnp_config)
         self.hue_upnp.run(listen=listen)
         self.listening = listen
@@ -72,7 +71,10 @@ class ISYHueEmulator():
         self.config['devices_hue'] = []
         for i, device in enumerate(self.pdevices):
             # Only used for debug
-            self.config['devices_hue'].append({'name': device.name, 'id': device.id, 'index': i })
+            if device is False:
+                self.config['devices_hue'].append(device)
+            else:
+                self.config['devices_hue'].append({'name': device.name, 'id': device.id, 'index': i })
         self.l_info("save_config","saving config.tmp")
         with open("config.tmp", 'w') as outfile:
             json.dump(self.config, outfile, ensure_ascii=False, indent=4, sort_keys=True)
@@ -236,14 +238,13 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # Set all the defaults
                 super(pyhue_isy_node_handler,self).get_all()
                 # node.status will be 0-255
-                self.bri = self.node.status
                 if str(self.bri) == "-inf":
-                        self.parent.l_warning('pyhue:isy_node_handler.get_all','%s status=%s, changing to 0' % (self.name, str(self.node.status)));
-                        self.bri = 0
+                    self.parent.l_warning('pyhue:isy_node_handler.get_all','%s status=%s, changing to 0' % (self.name, str(self.node.status)));
+                    self.bri = 0
                 if int(self.bri) == 0:
-                        self.on  = "false"
+                    self.on  = "false"
                 else:
-                        self.on  = "true"
+                    self.on  = "true"
                 self.parent.l_info('pyhue:isy_node_handler.get_all','%s on=%s bri=%s' % (self.name, self.on, str(self.bri)));
 
         def set_on(self):
