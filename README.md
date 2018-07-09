@@ -88,6 +88,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.0.4 07/09/2018
+  - Add missing polyinterface to requirements.txt
 - 2.0.3 06/21/2018
   - Fix for when a spoken is removed
   - Fix to PyISY for Scenes that contain a nodeserver node
