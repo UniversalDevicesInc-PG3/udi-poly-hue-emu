@@ -33,13 +33,10 @@ IMPORTANT: Currently if you 'group device' it will not find your Spoken property
 
 ## Configuration
 
-The 'Configuration' tab contains the default values for all Custom Configuration Parameters.
+The 'Configuration' tab contains the default values for all Custom Configuration Parameters.  It also shows what
+devices are found to have spokens.
 
-* hue_port : The port used for Hue Emulator Can keep default of 8080
-* isy_host : The IP address of your ISY on the local network
-* isy_port : The http port of your ISY
-* isy_user : The user for your ISY
-* isy_password: The password for your ISY
+See [POLYGLOT_CONFIG.md](Polyglot Configuration Page)
 
 ### Hue Emulator Controller node
 
@@ -66,9 +63,7 @@ Also, in the nodeserver directory there will be a config.json that contains the 
 ## TODO
 
 - Move device info Custom Configuration Paramaters instead of config.json
-- New polyglot UI can display Help, test it to should show device info
 - Test bright/dim scenes
-- Shut down listener on startup
 
 ## Requirements
 
@@ -88,6 +83,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.0.5 07/09/2018
+  - Uses Polyglot 2.2.1 feature to add table of found spoken devices to the configuration page
 - 2.0.4 07/09/2018
   - Add missing polyinterface to requirements.txt
 - 2.0.3 06/21/2018

@@ -69,12 +69,15 @@ class ISYHueEmulator():
         self.config['version'] = 1
         # Only used for debugging
         self.config['devices_hue'] = []
+        self.config_info = []
         for i, device in enumerate(self.pdevices):
             # Only used for debug
             if device is False:
                 self.config['devices_hue'].append(device)
+                self.config_info.append('device index={} empty'.format(i))
             else:
                 self.config['devices_hue'].append({'name': device.name, 'id': device.id, 'index': i })
+                self.config_info.append('device index={} id={} name={}'.format(i,device.id,device.name))
         self.l_info("save_config","saving config.tmp")
         with open("config.tmp", 'w') as outfile:
             json.dump(self.config, outfile, ensure_ascii=False, indent=4, sort_keys=True)
@@ -104,7 +107,9 @@ class ISYHueEmulator():
         for i in range(0,max+1):
             self.pdevices.append(False)
         self.l_info(lpfx,'max index = {}, len pdevices = {}'.format(max,len(self.pdevices)))
+        found_nodes = False
         for child in self.isy.nodes.allLowerNodes:
+            found_nodes = True
             if child[0] is 'node' or child[0] is 'group':
                 #self.l_info(lpfx,child)
                 mnode = self.isy.nodes[child[2]]
@@ -127,6 +132,9 @@ class ISYHueEmulator():
                         if len(mnode.controllers) > 0:
                                 mnode = self.isy.nodes[mnode.controllers[0]]
                     self.insert_device(pyhue_isy_node_handler(self,spoken,mnode,cnode))
+        if not found_nodes:
+            self.l_error(lpfs,"No nodes found, must have been an ISY connection error?")
+            return;
         self.save_config()
 
 
@@ -172,6 +180,7 @@ class ISYHueEmulator():
             #else:
             self.l_info('insert_device','Setting   device name={} id={} index={}'.format(device.name,device.id,fdev['index']))
             self.pdevices[fdev['index']] = device
+
 
     def add_device(self,config):
         self.l_info('add_device',str(config))

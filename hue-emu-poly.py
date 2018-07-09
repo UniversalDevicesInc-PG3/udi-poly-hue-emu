@@ -10,7 +10,7 @@ import logging
 from ISYHueEmulator import ISYHueEmulator
 from traceback import format_exception
 from threading import Thread,Event
-from hue_emu_funcs import get_network_ip
+from hue_emu_funcs import get_network_ip,get_server_data
 
 LOGGER = polyinterface.LOGGER
 
@@ -19,7 +19,10 @@ class Controller(polyinterface.Controller):
     def __init__(self, polyglot):
         super(Controller, self).__init__(polyglot)
         self.name = 'Hue Emulator Controller'
+        self.serverdata = get_server_data(LOGGER)
+        self.l_info('init','Initializing HueEmulator Controller {}'.format(self.serverdata['version']))
         self.isy_hue_emu = False
+        self.sent_cstr = ""
 
     def start(self):
         self.l_info('start','Starting HueEmulator Controller')
@@ -32,6 +35,8 @@ class Controller(polyinterface.Controller):
         self.l_info('start','done')
 
     def shortPoll(self):
+        self.l_debug('shortPoll','')
+        self.update_config_docs()
         pass
 
     def longPoll(self):
@@ -47,7 +52,28 @@ class Controller(polyinterface.Controller):
         LOGGER.debug('NodeServer stopped.')
 
     def refresh(self, *args, **kwargs):
-        pass
+        self.l_info('refresh','')
+        if self.isy_hue_emu is False:
+            self.l_error('refresh','No Hue Emulator?')
+            return
+        self.isy_hue_emu.refresh()
+        self.update_config_docs()
+
+    def update_config_docs(self):
+        # '<style> table { cellpadding: 10px } </style>'
+        self.config_info = ['<table border=1>','<tr><th><center>HueId<th><center>Id<th><center>Spoken</tr>']
+        for i, device in enumerate(self.isy_hue_emu.pdevices):
+            # Only used for debug
+            if device is False:
+                self.config_info.append('<tr><td>{}<td colspan=2>empty</tr>'.format(i))
+            else:
+                self.config_info.append('<tr><td>{}<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;</tr>'.format(i,device.id,device.name))
+        self.config_info.append('</table>')
+        s = "\n"
+        cstr = s.join(self.config_info)
+        if self.sent_cstr != cstr:
+            self.poly.add_custom_config_docs(cstr,True)
+            self.sent_cstr = cstr
 
     def connect(self):
         self.l_info('connect','Starting thread for ISYHueEmulator')
@@ -92,6 +118,9 @@ class Controller(polyinterface.Controller):
         """
         This is an example if using custom Params for user and password and an example with a Dictionary
         """
+        # Remove all existing notices
+        self.removeNoticesAll()
+
         st = True
         default_port = "8080"
         if 'hue_port' in self.polyConfig['customParams']:
@@ -140,8 +169,6 @@ class Controller(polyinterface.Controller):
         # Make sure they are in the params
         self.addCustomParam({'hue_port': self.hue_port, 'isy_host': self.isy_host, 'isy_port': self.isy_port, 'isy_user': self.isy_user, 'isy_password': self.isy_password})
 
-        # Remove all existing notices
-        self.removeNoticesAll()
         # Add a notice if some params don't look correct.
         if not st:
             self.addNotice("Please set parameters in configuration page and restart this nodeserver")
@@ -208,11 +235,7 @@ class Controller(polyinterface.Controller):
         return st
 
     def cmd_refresh(self,command):
-        self.l_info('refresh:')
-        if self.isy_hue_emu is False:
-            LOGGER.error('No Hue Emulator?')
-            return
-        self.isy_hue_emu.refresh()
+        self.refresh()
 
     def cmd_set_debug_mode(self,command):
         val = int(command.get('value'))
@@ -260,4 +283,3 @@ if __name__ == "__main__":
         """
         Catch SIGTERM or Control-C and exit cleanly.
         """
-                                                                                                                                                                                                                                                                                                                                                                                                                                              
