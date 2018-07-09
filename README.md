@@ -12,6 +12,8 @@ Previously this functionality was available in [ISYHelper](https://github.com/ji
 
 It uses the [PyISY Library](https://pypi.python.org/pypi/PyISY) to connect to the ISY and control devices, and the [Python Hue Hub Emulator](https://github.com/falk0069/hue-upnp) to emulate a Hue Hub.
 
+This version remembers the devices previous hue id so they should not ever change.
+
 ## Setup
 
 By default all devices that have a 'Spoken' property set in the ISY notes will be added to the list.  To set this right click on the device in the ISY admin console and select 'Notes'.  If you have a recent version of the ISY firmware and admin console you should see the option to add 'Spoken'.  If you want the spoken name to always match the device name, just make the value of the Spoken property be the number one '1', without the quotes. Make sure there are no accents in the Spoken property, only plain ASCII characters, or the discovery will fail.
