@@ -84,7 +84,7 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 # Release Notes
 
 - 2.0.5 07/09/2018
-  - Uses Polyglot 2.2.1 feature to add table of found spoken devices to the configuration page
+  - Uses new Polyglot feature to add table of found spoken devices to the configuration page
 - 2.0.4 07/09/2018
   - Add missing polyinterface to requirements.txt
 - 2.0.3 06/21/2018

@@ -61,13 +61,13 @@ class Controller(polyinterface.Controller):
 
     def update_config_docs(self):
         # '<style> table { cellpadding: 10px } </style>'
-        self.config_info = ['<table border=1>','<tr><th><center>HueId<th><center>Id<th><center>Spoken</tr>']
+        self.config_info = ['<h1>Spoken Device Table</h1>','This table is refreshed during short poll, so it may be out of date for a few seconds<br>','<table border=1>','<tr><th><center>HueId<th><center>Id<th><center>Node<th><center>Scene<th><center>Spoken<th><center>On<th><center>Bri</tr>']
         for i, device in enumerate(self.isy_hue_emu.pdevices):
             # Only used for debug
             if device is False:
-                self.config_info.append('<tr><td>{}<td colspan=2>empty</tr>'.format(i))
+                self.config_info.append('<tr><td>{}<td colspan=6>empty</tr>'.format(i))
             else:
-                self.config_info.append('<tr><td>{}<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;</tr>'.format(i,device.id,device.name))
+                self.config_info.append('<tr><td>{}<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;</tr>'.format(i,device.id,device.node,device.scene,device.name,device.on,device.bri))
         self.config_info.append('</table>')
         s = "\n"
         cstr = s.join(self.config_info)
