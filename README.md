@@ -83,6 +83,10 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- NOT RELEASED
+  - Add Table of Spoken devices shown in Configuration page
+  - Only send all lights response when it changes
+  - In Progress, properly track status if ISY devices so proper values show in Harmony
 - 2.0.5 07/09/2018
   - Uses new Polyglot feature to add table of found spoken devices to the configuration page
 - 2.0.4 07/09/2018

@@ -47,6 +47,13 @@ class ISYHueEmulator():
             return False
         if not self.refresh():
             return False
+        # Now that we are all setup, we can accept device changes from the isy.
+        # FIXME: But this means from the time we connect till now, we can miss
+        # FIXME: device status changes, do we care?
+        self.isy.auto_update = True
+        #
+        # Now start up the hue_upnp...
+        #
         self.l_info('connect','Default config: {}'.format(hueUpnp_config))
         hueUpnp_config.devices = self.pdevices
         hueUpnp_config.logger  = LOGGER
@@ -54,9 +61,10 @@ class ISYHueEmulator():
         hueUpnp_config.standard['PORT']      = self.port
         hueUpnp_config.standard['DEBUG']     = True
         self.hue_upnp = hue_upnp(hueUpnp_config)
-        self.hue_upnp.run(listen=listen)
         self.listening = listen
-        #self.isy.auto_update = True
+        self.hue_upnp.run(listen=listen)
+
+
 
     def start_listener(self):
         self.hue_upnp.start_listener()
@@ -234,6 +242,8 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.scene   = scene
                 self.xy      = False
                 self.ct      = False
+                self.bri     = 0
+                self.on      = "false"
                 node.status.subscribe('changed', self.get_all_changed)
                 self.parent.l_info('pyhue_isy_node_handler.__init__','name=%s node=%s scene=%s' % (self.name, self.node, self.scene));
                 super(pyhue_isy_node_handler,self).__init__(name)
@@ -247,9 +257,11 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # Set all the defaults
                 super(pyhue_isy_node_handler,self).get_all()
                 # node.status will be 0-255
-                if str(self.bri) == "-inf":
+                if str(self.node.status) == "-inf":
                     self.parent.l_warning('pyhue:isy_node_handler.get_all','%s status=%s, changing to 0' % (self.name, str(self.node.status)));
                     self.bri = 0
+                else:
+                    self.bri = self.node.status
                 if int(self.bri) == 0:
                     self.on  = "false"
                 else:
@@ -277,13 +289,13 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 return ret
 
         def set_bri(self,value):
-                self.parent.l_info('pyhue:isy_handler.set_bri','%s on val=%d' % (self.name, value));
+                self.parent.l_info('pyhue:isy_handler.set_bri','{} on val={}'.format(self.name, value));
                 # Only set directly on the node when it's dimmable and value is not 0 or 254
 		        # TODO: node.dimmable broken in current PyISY?
                 if value > 0 and value < 254:
                         # val=bri does not work?
                         ret = self.node.on(value)
-                        self.parent.l_info('pyhue:isy_handler.set_bri','%s node.on(%d) = %s' % (self.name, value, str(ret)));
+                        self.parent.l_info('pyhue:isy_handler.set_bri','{} node.on({}) = {}'.format(self.name, value, ret));
                 else:
                         if value > 0:
                                 ret = self.set_on()
@@ -291,7 +303,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                         else:
                                 ret = self.set_off()
                                 self.bri = 0
-                self.parent.l_info('pyhue:isy_handler.set_bri','%s on=%s bri=%d' % (self.name, self.on, self.bri));
+                self.parent.l_info('pyhue:isy_handler.set_bri','{} on={} bri={}'.format(self.name, self.on, self.bri));
                 return ret
 
 # TODO: Somday support setting ISY variables?
