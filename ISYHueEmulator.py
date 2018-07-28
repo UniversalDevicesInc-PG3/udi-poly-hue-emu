@@ -12,6 +12,7 @@ import sys
 sys.path.insert(0,"PyISY")
 import PyISY
 import shutil
+import logging
 
 # Local version of hue-upnp which works with Python3
 sys.path.insert(0,"hue-upnp")
@@ -45,12 +46,16 @@ class ISYHueEmulator():
         self.l_info('connect',' ISY Connected: ' + str(self.isy.connected))
         if not self.isy.connected:
             return False
-        if not self.refresh():
-            return False
+        # FIXME: This is not working because PyISY creates a logger with __name__?
+        #logging.getLogger('ISY').setLevel(logging.WARNING)
+        # FIXME: And this doesn't eem to work either?? Still get ISY INFO messages.
+        logging.getLogger(__name__).setLevel(logging.WARNING)
         # Now that we are all setup, we can accept device changes from the isy.
         # FIXME: But this means from the time we connect till now, we can miss
         # FIXME: device status changes, do we care?
         self.isy.auto_update = True
+        if not self.refresh():
+            return False
         #
         # Now start up the hue_upnp...
         #
@@ -63,8 +68,6 @@ class ISYHueEmulator():
         self.hue_upnp = hue_upnp(hueUpnp_config)
         self.listening = listen
         self.hue_upnp.run(listen=listen)
-
-
 
     def start_listener(self):
         self.hue_upnp.start_listener()
@@ -137,8 +140,10 @@ class ISYHueEmulator():
                             self.l_info(lpfx," is a scene controller of " + str(cgroup[0]) + '=' + str(cnode) + ' "' + cnode.name + '"')
                     else:
                         cnode = mnode
-                        if len(mnode.controllers) > 0:
-                                mnode = self.isy.nodes[mnode.controllers[0]]
+                        #if len(mnode.controllers) > 0:
+                        # FIXME: Problem with this is it may pick the wrong controller
+                        # FIXME: If a remotelink and kpl are both controllers may pick the remotelink :(
+                        #        mnode = self.isy.nodes[mnode.controllers[0]]
                     self.insert_device(pyhue_isy_node_handler(self,spoken,mnode,cnode))
         if not found_nodes:
             self.l_error(lpfs,"No nodes found, must have been an ISY connection error?")
@@ -257,11 +262,11 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # Set all the defaults
                 super(pyhue_isy_node_handler,self).get_all()
                 # node.status will be 0-255
-                if str(self.node.status) == "-inf":
+                if str(self.bri) == "-inf":
                     self.parent.l_warning('pyhue:isy_node_handler.get_all','%s status=%s, changing to 0' % (self.name, str(self.node.status)));
                     self.bri = 0
                 else:
-                    self.bri = self.node.status
+                    self.bri = int(self.node.status)
                 if int(self.bri) == 0:
                     self.on  = "false"
                 else:
