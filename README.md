@@ -18,7 +18,9 @@ This version remembers the devices previous hue id so they should not ever chang
 
 By default all devices that have a 'Spoken' property set in the ISY notes will be added to the list.  To set this right click on the device in the ISY admin console and select 'Notes'.  If you have a recent version of the ISY firmware and admin console you should see the option to add 'Spoken'.  If you want the spoken name to always match the device name, just make the value of the Spoken property be the number one '1', without the quotes. Make sure there are no accents in the Spoken property, only plain ASCII characters, or the discovery will fail.
 
-To control a scene you can set the Spoken on the scene controller, in which case the PyHue will turn on the scene, or set the Spoken on the scene itself. (Need to test how brighten/dim work with scenes)
+To control a scene you can set the Spoken on the scene controller, in which case the server will turn on the scene, or set the Spoken on the scene itself. (Need to test how brighten/dim work with scenes)
+
+The scene status will not always be correct, this is because PyISY decides that a scene is on when any of the devices in the scene is not off.  For this reason I prefer to put the spoken property on the main scene controller I want to track instead of the scene itself.  But if your scene contains multiple responders at different levels this will not work properly.
 
 IMPORTANT: Currently if you 'group device' it will not find your Spoken property on your device.  This is an issue with the PyISY library that I will try to fix soon because almost all my devices were grouped. (Is this still true?)
 
@@ -29,19 +31,16 @@ IMPORTANT: Currently if you 'group device' it will not find your Spoken property
 2. Go to the Polyglot Store in the UI and install HueEmulator
 3. Open the ISY Admin Console, close and re-open if it was already open.
 3. Once it installs you should see a new node 'Hue Emulator Controller'
-   * If you don't see that node, then restart the Harmony node server from the Polyglot UI.
+   * If you don't see that node, then restart the node server from the Polyglot UI.
 4. Set the Configuration as described in the next section.
 5. Restart the nodeserver after all params are saved.
 
 ## Configuration
 
-The 'Configuration' tab contains the default values for all Custom Configuration Parameters.
+The 'Configuration' tab contains the default values for all Custom Configuration Parameters.  It also shows what
+devices are found to have spokens.
 
-* hue_port : The port used for Hue Emulator Can keep default of 8080
-* isy_host : The IP address of your ISY on the local network
-* isy_port : The http port of your ISY
-* isy_user : The user for your ISY
-* isy_password: The password for your ISY
+See [POLYGLOT_CONFIG.md](Polyglot Configuration Page)
 
 ### Hue Emulator Controller node
 
@@ -68,9 +67,7 @@ Also, in the nodeserver directory there will be a config.json that contains the 
 ## TODO
 
 - Move device info Custom Configuration Paramaters instead of config.json
-- New polyglot UI can display Help, test it to should show device info
 - Test bright/dim scenes
-- Shut down listener on startup
 
 ## Requirements
 
@@ -90,6 +87,9 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.0.5 07/29/2018
+  - Add Table of Spoken devices shown in Configuration page, must be on Polyglto 2.2.1
+  - Properly track status if ISY devices so proper values show in Harmony
 - 2.0.4 07/09/2018
   - Add missing polyinterface to requirements.txt
 - 2.0.3 06/21/2018

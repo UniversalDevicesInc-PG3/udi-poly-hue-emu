@@ -12,6 +12,7 @@ import sys
 sys.path.insert(0,"PyISY")
 import PyISY
 import shutil
+import logging
 
 # Local version of hue-upnp which works with Python3
 sys.path.insert(0,"hue-upnp")
@@ -45,8 +46,19 @@ class ISYHueEmulator():
         self.l_info('connect',' ISY Connected: ' + str(self.isy.connected))
         if not self.isy.connected:
             return False
+        # FIXME: This is not working because PyISY creates a logger with __name__?
+        #logging.getLogger('ISY').setLevel(logging.WARNING)
+        # FIXME: And this doesn't eem to work either?? Still get ISY INFO messages.
+        logging.getLogger(__name__).setLevel(logging.WARNING)
+        # Now that we are all setup, we can accept device changes from the isy.
+        # FIXME: But this means from the time we connect till now, we can miss
+        # FIXME: device status changes, do we care?
+        self.isy.auto_update = True
         if not self.refresh():
             return False
+        #
+        # Now start up the hue_upnp...
+        #
         self.l_info('connect','Default config: {}'.format(hueUpnp_config))
         hueUpnp_config.devices = self.pdevices
         hueUpnp_config.logger  = LOGGER
@@ -54,9 +66,8 @@ class ISYHueEmulator():
         hueUpnp_config.standard['PORT']      = self.port
         hueUpnp_config.standard['DEBUG']     = True
         self.hue_upnp = hue_upnp(hueUpnp_config)
-        self.hue_upnp.run(listen=listen)
         self.listening = listen
-        #self.isy.auto_update = True
+        self.hue_upnp.run(listen=listen)
 
     def start_listener(self):
         self.hue_upnp.start_listener()
@@ -69,12 +80,15 @@ class ISYHueEmulator():
         self.config['version'] = 1
         # Only used for debugging
         self.config['devices_hue'] = []
+        self.config_info = []
         for i, device in enumerate(self.pdevices):
             # Only used for debug
             if device is False:
                 self.config['devices_hue'].append(device)
+                self.config_info.append('device index={} empty'.format(i))
             else:
                 self.config['devices_hue'].append({'name': device.name, 'id': device.id, 'index': i })
+                self.config_info.append('device index={} id={} name={}'.format(i,device.id,device.name))
         self.l_info("save_config","saving config.tmp")
         with open("config.tmp", 'w') as outfile:
             json.dump(self.config, outfile, ensure_ascii=False, indent=4, sort_keys=True)
@@ -104,7 +118,9 @@ class ISYHueEmulator():
         for i in range(0,max+1):
             self.pdevices.append(False)
         self.l_info(lpfx,'max index = {}, len pdevices = {}'.format(max,len(self.pdevices)))
+        found_nodes = False
         for child in self.isy.nodes.allLowerNodes:
+            found_nodes = True
             if child[0] is 'node' or child[0] is 'group':
                 #self.l_info(lpfx,child)
                 mnode = self.isy.nodes[child[2]]
@@ -124,9 +140,14 @@ class ISYHueEmulator():
                             self.l_info(lpfx," is a scene controller of " + str(cgroup[0]) + '=' + str(cnode) + ' "' + cnode.name + '"')
                     else:
                         cnode = mnode
-                        if len(mnode.controllers) > 0:
-                                mnode = self.isy.nodes[mnode.controllers[0]]
+                        #if len(mnode.controllers) > 0:
+                        # FIXME: Problem with this is it may pick the wrong controller
+                        # FIXME: If a remotelink and kpl are both controllers may pick the remotelink :(
+                        #        mnode = self.isy.nodes[mnode.controllers[0]]
                     self.insert_device(pyhue_isy_node_handler(self,spoken,mnode,cnode))
+        if not found_nodes:
+            self.l_error(lpfs,"No nodes found, must have been an ISY connection error?")
+            return;
         self.save_config()
 
 
@@ -172,6 +193,7 @@ class ISYHueEmulator():
             #else:
             self.l_info('insert_device','Setting   device name={} id={} index={}'.format(device.name,device.id,fdev['index']))
             self.pdevices[fdev['index']] = device
+
 
     def add_device(self,config):
         self.l_info('add_device',str(config))
@@ -225,6 +247,8 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.scene   = scene
                 self.xy      = False
                 self.ct      = False
+                self.bri     = 0
+                self.on      = "false"
                 node.status.subscribe('changed', self.get_all_changed)
                 self.parent.l_info('pyhue_isy_node_handler.__init__','name=%s node=%s scene=%s' % (self.name, self.node, self.scene));
                 super(pyhue_isy_node_handler,self).__init__(name)
@@ -238,9 +262,11 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # Set all the defaults
                 super(pyhue_isy_node_handler,self).get_all()
                 # node.status will be 0-255
-                if str(self.bri) == "-inf":
+                if str(self.node.status) == "-inf":
                     self.parent.l_warning('pyhue:isy_node_handler.get_all','%s status=%s, changing to 0' % (self.name, str(self.node.status)));
                     self.bri = 0
+                else:
+                    self.bri = int(self.node.status)
                 if int(self.bri) == 0:
                     self.on  = "false"
                 else:
@@ -268,13 +294,13 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 return ret
 
         def set_bri(self,value):
-                self.parent.l_info('pyhue:isy_handler.set_bri','%s on val=%d' % (self.name, value));
+                self.parent.l_info('pyhue:isy_handler.set_bri','{} on val={}'.format(self.name, value));
                 # Only set directly on the node when it's dimmable and value is not 0 or 254
 		        # TODO: node.dimmable broken in current PyISY?
                 if value > 0 and value < 254:
                         # val=bri does not work?
                         ret = self.node.on(value)
-                        self.parent.l_info('pyhue:isy_handler.set_bri','%s node.on(%d) = %s' % (self.name, value, str(ret)));
+                        self.parent.l_info('pyhue:isy_handler.set_bri','{} node.on({}) = {}'.format(self.name, value, ret));
                 else:
                         if value > 0:
                                 ret = self.set_on()
@@ -282,7 +308,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                         else:
                                 ret = self.set_off()
                                 self.bri = 0
-                self.parent.l_info('pyhue:isy_handler.set_bri','%s on=%s bri=%d' % (self.name, self.on, self.bri));
+                self.parent.l_info('pyhue:isy_handler.set_bri','{} on={} bri={}'.format(self.name, self.on, self.bri));
                 return ret
 
 # TODO: Somday support setting ISY variables?
