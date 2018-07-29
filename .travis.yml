@@ -10,4 +10,4 @@ install:
 
 script:
     - xmllint --noout profile/*/*.xml
-    - python3 hue-emu-poly.py
+    - python hue-emu-poly.py
