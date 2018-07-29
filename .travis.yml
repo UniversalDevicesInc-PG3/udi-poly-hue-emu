@@ -10,5 +10,5 @@ install:
 
 script:
     - xmllint --noout profile/*/*.xml
-    - ./install.sh
+    - ./install.sh no
     - python hue-emu-poly.py

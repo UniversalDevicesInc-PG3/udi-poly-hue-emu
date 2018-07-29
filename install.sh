@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-pip3 install -r requirements.txt --user
+if [  $# -gt 0 ]; then
+  echo "Skipping pip3 install, must be a travis run?"
+else
+  pip3 install -r requirements.txt --user
+fi
 
 echo ""
 if [ -e PyISY ]; then
