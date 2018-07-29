@@ -262,7 +262,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # Set all the defaults
                 super(pyhue_isy_node_handler,self).get_all()
                 # node.status will be 0-255
-                if str(self.bri) == "-inf":
+                if str(self.node.status) == "-inf":
                     self.parent.l_warning('pyhue:isy_node_handler.get_all','%s status=%s, changing to 0' % (self.name, str(self.node.status)));
                     self.bri = 0
                 else:

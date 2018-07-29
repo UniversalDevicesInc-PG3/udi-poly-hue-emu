@@ -22,6 +22,7 @@ class Controller(polyinterface.Controller):
         self.serverdata = get_server_data(LOGGER)
         self.l_info('init','Initializing HueEmulator Controller {}'.format(self.serverdata['version']))
         self.isy_hue_emu = False
+        self.ucd_check = False
         self.sent_cstr = ""
 
     def start(self):
@@ -61,6 +62,19 @@ class Controller(polyinterface.Controller):
 
     def update_config_docs(self):
         # '<style> table { cellpadding: 10px } </style>'
+        if self.ucd_check is False:
+            try:
+                if self.poly.supports_feature('customParamsDoc'):
+                    self.ucd = True
+                else:
+                    self.l_error('update_config_docs','polyinterface customParamsDoc feature not supported')
+                    self.ucd = False
+            except AttributeError:
+                self.l_error('update_config_docs','polyinterface supports feature failed?',True)
+                self.ucd = False
+            self.ucd_check = True
+        if self.ucd is False:
+            return
         self.config_info = [
         '<h1>Spoken Device Table</h1>',
         'This table is refreshed during short poll, so it may be out of date for a few seconds<br>',
