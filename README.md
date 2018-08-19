@@ -1,4 +1,6 @@
-![Build Status](https://travis-ci.org/jimboca/udi-poly-hue-emu.svg?branch=master)](https://travis-ci.org/jimboca/udi-poly-hue-emu)
+![Build Status](https://travis-ci.org/jimboca/udi-poly-hue-emu.svg?branch=master) master
+![Build Status](https://travis-ci.org/jimboca/udi-poly-hue-emu.svg?branch=dev) dev
+
 
 # udi-poly-hue-emu
 
