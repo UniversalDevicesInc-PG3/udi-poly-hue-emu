@@ -24,6 +24,7 @@ class Controller(polyinterface.Controller):
         self.isy_hue_emu = False
         self.ucd_check = False
         self.sent_cstr = ""
+        self.hb = 0
 
     def start(self):
         self.l_info('start','Starting HueEmulator Controller')
@@ -41,10 +42,20 @@ class Controller(polyinterface.Controller):
         pass
 
     def longPoll(self):
-        pass
+        self.heartbeat()
+
+    def heartbeat(self):
+        self.l_debug('heartbeat','hb={}'.format(self.hb))
+        if self.hb == 0:
+            self.reportCmd("DON",2)
+            self.hb = 1
+        else:
+            self.reportCmd("DOF",2)
+            self.hb = 0
+
 
     def query(self):
-        pass
+        self.reportDrivers();
 
     def delete(self):
         LOGGER.info('Oh God I\'m being deleted. Nooooooooooooooooooooooooooooooooooooooooo.')

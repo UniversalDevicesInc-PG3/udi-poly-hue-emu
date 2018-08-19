@@ -87,6 +87,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.0.6 08/16/2018
+  - Add Heartbeat which sends DON/DOF on each longPoll
 - 2.0.5 07/29/2018
   - Add Table of Spoken devices shown in Configuration page, must be on Polyglto 2.2.1
   - Properly track status if ISY devices so proper values show in Harmony

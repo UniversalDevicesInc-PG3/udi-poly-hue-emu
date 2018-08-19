@@ -11,8 +11,11 @@
           <st id="GV2" editor="bool" />
     		</sts>
         <cmds>
-            <sends />
-            <accepts>
+          <sends>
+            <cmd id="DON" />
+            <cmd id="DOF" />
+          </sends>
+          <accepts>
               <cmd id="SET_DEBUGMODE">
                 <p id="" editor="DEBUGMODE" init="GV1" />
               </cmd>
