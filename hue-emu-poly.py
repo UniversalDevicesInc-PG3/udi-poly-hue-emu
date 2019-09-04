@@ -33,6 +33,7 @@ class Controller(polyinterface.Controller):
         self.check_params()
         self.set_listen(self.get_listen())
         self.set_debug_level(self.getDriver('GV1'))
+        self.heartbeat()
         self.connect()
         self.l_info('start','done')
 

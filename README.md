@@ -89,6 +89,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.0.7 09/03/2019
+  - Change to use isy.nodes.nids instead of allLowerNodes
 - 2.0.6 08/16/2018
   - Add Heartbeat which sends DON/DOF on each longPoll
 - 2.0.5 07/29/2018
