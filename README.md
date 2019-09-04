@@ -89,8 +89,10 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
-- 2.0.7 09/03/2019
+- 2.0.8 09/03/2019
   - Change to use isy.nodes.nids instead of allLowerNodes
+- 2.0.7 03/03/2019
+  - No change in this code, but new version due to bug fix in locally cloned hue-upnp code that caused the wrong device to be referenced when items were removed before it from spoken list.
 - 2.0.6 08/16/2018
   - Add Heartbeat which sends DON/DOF on each longPoll
 - 2.0.5 07/29/2018
