@@ -114,7 +114,7 @@ class Controller(polyinterface.Controller):
         self.l_info('connect','Starting thread for ISYHueEmulator')
         # TODO: Can we get the ISY info from Polyglot?  If not, then document these
         self.isy_hue_emu = ISYHueEmulator(
-            get_network_ip("8.8.8.8"),
+            get_network_ip(logger=LOGGER),
             self.hue_port,
             self.isy_host,
             self.isy_port,

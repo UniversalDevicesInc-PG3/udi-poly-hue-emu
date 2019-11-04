@@ -89,6 +89,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.1.0 11/04/2019
+  - Fix get_network_ip to work on Polisy
 - 2.0.8 09/03/2019
   - Change to use isy.nodes.nids instead of allLowerNodes
 - 2.0.7 03/03/2019

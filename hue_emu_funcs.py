@@ -2,13 +2,30 @@
 
 import socket,json
 
-# from http://commandline.org.uk/python/how-to-find-out-ip-address-in-python/
-def get_network_ip(rhost):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect((rhost, 0))
-    ip = s.getsockname()[0]
-    s.close()
-    return ip
+def get_network_interface(interface='default',logger=None):
+    # Get the default gateway
+    gws = netifaces.gateways()
+    rt = False
+    if interface in gws:
+        gwd = gws[interface][netifaces.AF_INET]
+        logger.debug("gwd: {}={}".format(interface,gwd))
+        ifad = netifaces.ifaddresses(gwd[1])
+        rt = ifad[netifaces.AF_INET]
+        logger.debug("ifad: {}={}".format(gwd[1],rt))
+    else:
+        logger.error("No {} in gateways:{}".format(interface,gateways))
+    return rt
+
+
+def get_network_ip(logger=None):
+    try:
+        iface = get_network_interface(logger=logger)
+        rt = iface[0]['addr']
+    except Exception as err:
+        logger.error('get_network_ip: failed: {0}'.format(err))
+        rt = False
+    logger.info('get_network_ip: Returning {0}'.format(rt))
+    return rt
 
 def get_server_data(logger):
     # Read the SERVER info from the json.
