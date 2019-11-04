@@ -1,6 +1,6 @@
 
 
-import socket,json
+import socket,json,netifaces
 
 def get_network_interface(interface='default',logger=None):
     # Get the default gateway
