@@ -41,9 +41,28 @@ class ISYHueEmulator():
         self.load_config()
 
     def connect(self,listen):
-        # FIXME: How to set different logger level for Events?
-        self.isy = PyISY.ISY(self.isy_host, self.isy_port, self.isy_user, self.isy_password, False, "1.1", LOGGER)
-        self.l_info('connect',' ISY Connected: ' + str(self.isy.connected))
+        done = False
+        cnt  = 0
+        while (not done):
+            cnt += 1
+            self.l_debug('connect','ISY connect try {}'.format(cnt))
+            try:
+                # FIXME: How to set different logger level for Events?
+                self.isy = PyISY.ISY(self.isy_host, self.isy_port, self.isy_user, self.isy_password, False, "1.1", LOGGER)
+                done = True
+            except Exception as ex:
+                # Can any other exception happen?
+                template = "An exception of type {0} occured. Arguments:\n{1!r}"
+                message = template.format(type(ex).__name__, ex.args)
+                self.l_error('connect',message, exc_info=True)
+            self.l_info('connect',' ISY Connected: ' + str(self.isy.connected))
+            if not self.isy.connected:
+                if cnt == 10:
+                    self.l_error('connect','Tried to connect 10 times, giving up')
+                    done = True
+                else:
+                    self.l_error('connect','ISY not connected, will try again')
+
         if not self.isy.connected:
             return False
         # FIXME: This is not working because PyISY creates a logger with __name__?

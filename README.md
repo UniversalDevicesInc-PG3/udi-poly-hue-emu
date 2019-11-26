@@ -89,6 +89,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.1.1 11/04/2019
+  - Trap and retry for ISY connection failures which occasionally happen on startup when ISY is overloaded
 - 2.1.0 11/04/2019
   - Fix get_network_ip to work on Polisy
 - 2.0.8 09/03/2019
