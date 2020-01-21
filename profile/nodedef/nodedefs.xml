@@ -5,6 +5,8 @@
         <editors />
         <sts>
 		    	<st id="ST" editor="bool" />
+          <!-- ISY Connected -->
+          <st id="GV0" editor="bool" />
           <!-- Debug Mode -->
           <st id="GV1" editor="DEBUGMODE" />
           <!-- Listen -->

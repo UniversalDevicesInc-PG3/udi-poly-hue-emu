@@ -3,6 +3,7 @@ ND-controller-NAME = Hue Emulator Controller
 CMD-ctl-REFRESH-NAME = Refresh
 CMD-ctl-UPDATE_PROFILE-NAME = Update Profile
 ST-ctl-ST-NAME = NodeServer Online
+ST-ctl-GV0-NAME = ISY Connected
 ST-ctl-GV1-NAME = Debug Mode
 ST-ctl-GV2-NAME = Listen
 

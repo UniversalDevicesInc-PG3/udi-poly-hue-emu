@@ -8,6 +8,7 @@
     "notice": "Your disclaimer here",
     "shortPoll": "5",
     "longPoll": "60",
+    "profile_version": "2.0.5",
     "credits": [
         {
             "title": "hue-emu: A NodeServer for Emulating a Hue Hub of ISY Devices",

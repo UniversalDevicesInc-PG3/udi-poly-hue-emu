@@ -30,6 +30,7 @@ class ISYHueEmulator():
     def __init__(self,host,port,isy_host,isy_port,isy_user,isy_password):
         self.host         = host
         self.port         = port
+        self.isy          = None # The PyISY.ISY object
         self.isy_host     = isy_host
         self.isy_port     = isy_port
         self.isy_user     = isy_user
@@ -39,6 +40,11 @@ class ISYHueEmulator():
         self.listening = False
         self.config_file = 'config.json'
         self.load_config()
+
+    def isy_connected(self):
+        if self.isy is None:
+            return False
+        return self.isy.connected
 
     def connect(self,listen):
         # FIXME: How to set different logger level for Events?

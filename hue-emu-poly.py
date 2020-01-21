@@ -9,7 +9,7 @@ import time
 import logging
 from ISYHueEmulator import ISYHueEmulator
 from traceback import format_exception
-from threading import Thread,Event
+from threading import Thread
 from hue_emu_funcs import get_network_ip,get_server_data
 
 LOGGER = polyinterface.LOGGER
@@ -19,25 +19,30 @@ class Controller(polyinterface.Controller):
     def __init__(self, polyglot):
         super(Controller, self).__init__(polyglot)
         self.name = 'Hue Emulator Controller'
-        self.serverdata = get_server_data(LOGGER)
+        ifc = self.poly.get_network_interface()
+        self.serverdata = self.poly.get_server_data(check_profile=True)g
         self.l_info('init','Initializing HueEmulator Controller {}'.format(self.serverdata['version']))
         self.isy_hue_emu = False
         self.sent_cstr = ""
+        self.thread = None
 
     def start(self):
-        self.l_info('start','Starting HueEmulator Controller')
+        self.l_info('start','Starting HueEmulator Controller {}'.format(self.serverdata['version']))
         # New vesions need to force an update
-        self.check_version()
         self.check_params()
         self.set_listen(self.get_listen())
         self.set_debug_level(self.getDriver('GV1'))
+        self.set_isy_connected(False)
         self.connect()
         self.l_info('start','done')
 
     def shortPoll(self):
         self.l_debug('shortPoll','')
+        self.set_isy_connected()
         self.update_config_docs()
-        pass
+        if self.thread is not None:
+            if not self.thread.isAlive():
+                self.l_error('shortPoll',"Thread is dead, restarting.")
 
     def longPoll(self):
         pass
@@ -88,7 +93,7 @@ class Controller(polyinterface.Controller):
         self.l_info('connect','Starting thread for ISYHueEmulator')
         # TODO: Can we get the ISY info from Polyglot?  If not, then document these
         self.isy_hue_emu = ISYHueEmulator(
-            get_network_ip("8.8.8.8"),
+            ifc['addr'],
             self.hue_port,
             self.isy_host,
             self.isy_port,
@@ -96,7 +101,6 @@ class Controller(polyinterface.Controller):
             self.isy_password,
             )
         self.client_status = "init"
-        self.event = Event()
         self.thread = Thread(target=self._connect)
         self.thread.daemon = True
         return self.thread.start()
@@ -106,22 +110,12 @@ class Controller(polyinterface.Controller):
         if self.get_listen() == 0:
             listen = False
         self.l_info("_connect","listen={}".format(listen))
-        self.thread = Thread(target=self.isy_hue_emu.connect(listen))
-
-    def check_version(self):
-        current_version = 4
-        if 'cver' in self.polyConfig['customData']:
-            cver = self.polyConfig['customData']['cver']
-        else:
-            cver = 0
-        self.l_debug("start","cver={} current_version={}".format(cver,current_version))
-        if cver < current_version:
-            self.l_debug("start","updating myself since cver {} < {}".format(cver,current_version))
-            st = self.poly.installprofile()
-            # Force an update.
-            self.addNode(self,update=True)
-            self.polyConfig['customData']['cver'] = current_version
-            self.saveCustomData(self.polyConfig['customData'])
+        try:
+            self.isy_hue_emu.connect(listen)
+        except Exception as ex:
+            self.l_error("PyISY Connection crashed with {}, will restart on next shortPoll".format(ex), exc_info=True)
+        # Thread is dead?
+        self.set_isy_connected(False)
 
     def check_params(self):
         """
@@ -238,6 +232,18 @@ class Controller(polyinterface.Controller):
                 self.isy_hue_emu.start_listener()
         self.setDriver('GV2', val)
 
+    def set_isy_connected(self,val=None):
+        if val is None:
+            if self.thread is None:
+                val = False
+            elif self.isy_hue_emu is False:
+                val = False
+            elif self.isy_hue_emu.isy_connected():
+                val = True
+            else:
+                val = False
+        self.setDriver('GV0', 1 if val else 0)
+
     def cmd_update_profile(self,command):
         self.l_info('update_profile','')
         st = self.poly.installprofile()
@@ -264,9 +270,10 @@ class Controller(polyinterface.Controller):
         'SET_LISTEN': cmd_set_listen,
     }
     drivers = [
-        {'driver': 'ST', 'value': 1, 'uom': 2},
-        {'driver': 'GV1', 'value': 20,  'uom': 25}, # integer: Log/Debug Mode
-        {'driver': 'GV2', 'value': 0, 'uom': 2} # Listen
+        {'driver': 'ST',  'value': 1,  'uom': 2},   # Node Status
+        {'driver': 'GV0', 'value': 0,  'uom': 2},   # ISY Connected
+        {'driver': 'GV1', 'value': 20, 'uom': 25},  # integer: Log/Debug Mode
+        {'driver': 'GV2', 'value': 0,  'uom': 2}    # Listen
     ]
 
 if __name__ == "__main__":
