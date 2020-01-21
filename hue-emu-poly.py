@@ -72,16 +72,17 @@ class Controller(polyinterface.Controller):
         '<table border=1>',
         '<tr><th rowspan=2><center>HueId<th rowspan=2><center>NSId<th colspan=2><center>Property Node/Scene<th colspan=2><center>Scene<th rowspan=2><center>Spoken<th rowspan=2><center>On<th rowspan=2><center>Bri</tr>',
         '<tr><th><center>Id<th><center>Name<th><center>Scene<th><center>Name<th></tr>']
-        for i, device in enumerate(self.isy_hue_emu.pdevices):
-            # Only used for debug
-            if device is False:
-                self.config_info.append('<tr><td>{}<td colspan=8>empty</tr>'.format(i))
-            elif device.scene is False:
-                self.config_info.append('<tr><td>{}<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td colspan=2>&nbsp;None&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;</tr>'.
-                format(i,device.id,device.node,device.node.name,device.name,device.on,device.bri))
-            else:
-                self.config_info.append('<tr><td>{}<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;</tr>'.
-                format(i,device.id,device.node,device.node.name,device.scene,device.scene.name,device.name,device.on,device.bri))
+        if self.isy_hue_emu is not False:
+            for i, device in enumerate(self.isy_hue_emu.pdevices):
+                # Only used for debug
+                if device is False:
+                    self.config_info.append('<tr><td>{}<td colspan=8>empty</tr>'.format(i))
+                elif device.scene is False:
+                    self.config_info.append('<tr><td>{}<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td colspan=2>&nbsp;None&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;</tr>'.
+                    format(i,device.id,device.node,device.node.name,device.name,device.on,device.bri))
+                else:
+                    self.config_info.append('<tr><td>{}<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;</tr>'.
+                    format(i,device.id,device.node,device.node.name,device.scene,device.scene.name,device.name,device.on,device.bri))
         self.config_info.append('</table>')
         s = "\n"
         cstr = s.join(self.config_info)
