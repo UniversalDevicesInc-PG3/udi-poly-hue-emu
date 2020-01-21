@@ -1,4 +1,6 @@
-![Build Status](https://travis-ci.org/jimboca/udi-poly-hue-emu.svg?branch=master)](https://travis-ci.org/jimboca/udi-poly-hue-emu)
+![Build Status](https://travis-ci.org/jimboca/udi-poly-hue-emu.svg?branch=master) master
+![Build Status](https://travis-ci.org/jimboca/udi-poly-hue-emu.svg?branch=dev) dev
+
 
 # udi-poly-hue-emu
 
@@ -11,6 +13,8 @@ This node server is intended to allow controlling ISY994 devices from other devi
 Previously this functionality was available in [ISYHelper](https://github.com/jimboca/ISYHelper) but all ISYHelper functions have been moved to nodeservers.
 
 It uses the [PyISY Library](https://pypi.python.org/pypi/PyISY) to connect to the ISY and control devices, and the [Python Hue Hub Emulator](https://github.com/falk0069/hue-upnp) to emulate a Hue Hub.
+
+This version remembers the devices previous hue id so they should not ever change.
 
 ## Setup
 
@@ -85,11 +89,19 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
-- 2.0.6
-  - Add Table of Spoken devices shown in Configuration page
+- 2.1.1 11/04/2019
+  - Trap and retry for ISY connection failures which occasionally happen on startup when ISY is overloaded
+- 2.1.0 11/04/2019
+  - Fix get_network_ip to work on Polisy
+- 2.0.8 09/03/2019
+  - Change to use isy.nodes.nids instead of allLowerNodes
+- 2.0.7 03/03/2019
+  - No change in this code, but new version due to bug fix in locally cloned hue-upnp code that caused the wrong device to be referenced when items were removed before it from spoken list.
+- 2.0.6 08/16/2018
+  - Add Heartbeat which sends DON/DOF on each longPoll
+- 2.0.5 07/29/2018
+  - Add Table of Spoken devices shown in Configuration page, must be on Polyglto 2.2.1
   - Properly track status if ISY devices so proper values show in Harmony
-- 2.0.5 07/09/2018
-  - Uses new Polyglot feature to add table of found spoken devices to the configuration page
 - 2.0.4 07/09/2018
   - Add missing polyinterface to requirements.txt
 - 2.0.3 06/21/2018

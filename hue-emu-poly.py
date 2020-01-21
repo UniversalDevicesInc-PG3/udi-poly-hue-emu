@@ -20,8 +20,10 @@ class Controller(polyinterface.Controller):
         self.name = 'Hue Emulator Controller'
         self.l_info('init','Initializing')
         self.isy_hue_emu = False
+        self.ucd_check = False
         self.sent_cstr = ""
         self.thread = None
+        self.hb = 0
 
     def start(self):
         self.l_info('start','Starting')
@@ -33,6 +35,7 @@ class Controller(polyinterface.Controller):
         self.set_listen(self.get_listen())
         self.set_debug_level(self.getDriver('GV1'))
         self.set_isy_connected(False)
+        self.heartbeat()
         self.connect()
         self.l_info('start','done')
 
@@ -48,10 +51,20 @@ class Controller(polyinterface.Controller):
                 self.connect()
 
     def longPoll(self):
-        pass
+        self.heartbeat()
+
+    def heartbeat(self):
+        self.l_debug('heartbeat','hb={}'.format(self.hb))
+        if self.hb == 0:
+            self.reportCmd("DON",2)
+            self.hb = 1
+        else:
+            self.reportCmd("DOF",2)
+            self.hb = 0
+
 
     def query(self):
-        pass
+        self.reportDrivers();
 
     def delete(self):
         LOGGER.info('Oh God I\'m being deleted. Nooooooooooooooooooooooooooooooooooooooooo.')
@@ -69,6 +82,19 @@ class Controller(polyinterface.Controller):
 
     def update_config_docs(self):
         # '<style> table { cellpadding: 10px } </style>'
+        if self.ucd_check is False:
+            try:
+                if self.poly.supports_feature('customParamsDoc'):
+                    self.ucd = True
+                else:
+                    self.l_error('update_config_docs','polyinterface customParamsDoc feature not supported')
+                    self.ucd = False
+            except AttributeError:
+                self.l_error('update_config_docs','polyinterface supports feature failed?',True)
+                self.ucd = False
+            self.ucd_check = True
+        if self.ucd is False:
+            return
         self.config_info = [
         '<h1>Spoken Device Table</h1>',
         'This table is refreshed during short poll, so it may be out of date for a few seconds<br>',

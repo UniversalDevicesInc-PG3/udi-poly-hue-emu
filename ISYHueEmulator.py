@@ -47,9 +47,28 @@ class ISYHueEmulator():
         return self.isy.connected
 
     def connect(self,listen):
-        # FIXME: How to set different logger level for Events?
-        self.isy = PyISY.ISY(self.isy_host, self.isy_port, self.isy_user, self.isy_password, False, "1.1", LOGGER)
-        self.l_info('connect',' ISY Connected: ' + str(self.isy.connected))
+        done = False
+        cnt  = 0
+        while (not done):
+            cnt += 1
+            self.l_debug('connect','ISY connect try {}'.format(cnt))
+            try:
+                # FIXME: How to set different logger level for Events?
+                self.isy = PyISY.ISY(self.isy_host, self.isy_port, self.isy_user, self.isy_password, False, "1.1", LOGGER)
+                done = True
+            except Exception as ex:
+                # Can any other exception happen?
+                template = "An exception of type {0} occured. Arguments:\n{1!r}"
+                message = template.format(type(ex).__name__, ex.args)
+                self.l_error('connect',message, exc_info=True)
+            self.l_info('connect',' ISY Connected: ' + str(self.isy.connected))
+            if not self.isy.connected:
+                if cnt == 10:
+                    self.l_error('connect','Tried to connect 10 times, giving up')
+                    done = True
+                else:
+                    self.l_error('connect','ISY not connected, will try again')
+
         if not self.isy.connected:
             return False
         # FIXME: This is not working because PyISY creates a logger with __name__?
@@ -125,11 +144,19 @@ class ISYHueEmulator():
             self.pdevices.append(False)
         self.l_info(lpfx,'max index = {}, len pdevices = {}'.format(max,len(self.pdevices)))
         found_nodes = False
-        for child in self.isy.nodes.allLowerNodes:
+        for nodeid in self.isy.nodes.nids:
+            child = self.isy.nodes[nodeid]
+            if hasattr(child,'type'):
+                ctype = 'node'
+            elif hasattr(child,'_controllers'):
+                ctype = 'group'
+            else:
+                ctype = 'unknown'
+            self.l_info(lpfx,"add_spoken_device: checking {} type={} ctype={}".format(child,type(child),ctype))
             found_nodes = True
-            if child[0] is 'node' or child[0] is 'group':
+            if ctype == 'node' or ctype == 'group':
                 #self.l_info(lpfx,child)
-                mnode = self.isy.nodes[child[2]]
+                mnode = child
                 spoken = mnode.spoken
                 if spoken is not None:
                     # TODO: Should this be a comma seperatd list of which echo will respond?
@@ -138,7 +165,7 @@ class ISYHueEmulator():
                         spoken = mnode.name
                     self.l_info(lpfx,"add_spoken_device: name=" + mnode.name + ", spoken=" + str(spoken))
                     cnode = False
-                    if child[0] is 'node':
+                    if ctype is 'node':
                         # Is it a controller of a scene?
                         cgroup = mnode.get_groups(responder=False)
                         if len(cgroup) > 0:
@@ -152,7 +179,7 @@ class ISYHueEmulator():
                         #        mnode = self.isy.nodes[mnode.controllers[0]]
                     self.insert_device(pyhue_isy_node_handler(self,spoken,mnode,cnode))
         if not found_nodes:
-            self.l_error(lpfs,"No nodes found, must have been an ISY connection error?")
+            self.l_error(lpfx,"No nodes with spoken found, could have been an ISY connection error?")
             return;
         self.save_config()
 
@@ -189,7 +216,7 @@ class ISYHueEmulator():
         fdev = self.in_config(device)
         if fdev is False:
             self.l_info('insert_device','Appending device name={} id={} index={}'.format(device.name,device.id,len(self.pdevices)))
-            self.config['devices'].append({'name': device.name, 'id': device.id, 'index': len(self.pdevices) })
+            self.config['devices'].append({'name': device.name, 'id': device.id, 'index': len(self.pdevices), 'type': device.type })
             self.pdevices.append(device)
         else:
             #This shouldn't happen now that we initialize the list with False
@@ -197,11 +224,11 @@ class ISYHueEmulator():
             #    self.l_info('insert_device','Inserting device name={} id={} index={}'.format(device.name,device.id,fdev['index']))
             #    self.pdevices.insert(fdev['index'],device)
             #else:
-            self.l_info('insert_device','Setting   device name={} id={} index={}'.format(device.name,device.id,fdev['index']))
+            self.l_info('insert_device','Setting   device name={} type={} id={} index={} '.format(device.name,device.type,device.id,fdev['index']))
             self.pdevices[fdev['index']] = device
 
 
-    def add_device(self,config):
+    def xxx_add_device(self,config):
         self.l_info('add_device',str(config))
         if not 'name' in config:
             raise ValueError("No name defined for " + str(config))
@@ -250,13 +277,18 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # Used to look for device in list in case name changes.
                 # FIXME: Didn't PyISY used to have .nid property?
                 self.id      = node._id
+                if node.dimmable is True:
+                    self.type = "Dimmable light"
+                else:
+                    self.type = "On/off light"
                 self.scene   = scene
                 self.xy      = False
+
                 self.ct      = False
                 self.bri     = 0
                 self.on      = "false"
                 node.status.subscribe('changed', self.get_all_changed)
-                self.parent.l_info('pyhue_isy_node_handler.__init__','name=%s node=%s scene=%s' % (self.name, self.node, self.scene));
+                self.parent.l_info('pyhue_isy_node_handler.__init__','name=%s node=%s scene=%s type=%s dimmable=%s' % (self.name, self.node, self.scene, self.type, node.dimmable));
                 super(pyhue_isy_node_handler,self).__init__(name)
 
         def get_all_changed(self,e):
@@ -268,7 +300,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # Set all the defaults
                 super(pyhue_isy_node_handler,self).get_all()
                 # node.status will be 0-255
-                if str(self.bri) == "-inf":
+                if str(self.node.status) == "-inf":
                     self.parent.l_warning('pyhue:isy_node_handler.get_all','%s status=%s, changing to 0' % (self.name, str(self.node.status)));
                     self.bri = 0
                 else:
