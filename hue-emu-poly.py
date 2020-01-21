@@ -42,7 +42,9 @@ class Controller(polyinterface.Controller):
         self.update_config_docs()
         if self.thread is not None:
             if not self.thread.isAlive():
+                self.thread = None
                 self.l_error('shortPoll',"Thread is dead, restarting.")
+                self.connect()
 
     def longPoll(self):
         pass
