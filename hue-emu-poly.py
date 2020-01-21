@@ -44,6 +44,7 @@ class Controller(polyinterface.Controller):
             if not self.thread.isAlive():
                 self.thread = None
                 self.l_error('shortPoll',"Thread is dead, restarting.")
+                self.check_params() # Reload in case they changed.
                 self.connect()
 
     def longPoll(self):
@@ -136,7 +137,7 @@ class Controller(polyinterface.Controller):
             self.l_info('check_params','hue_port not defined in customParams, set to default {}'.format(self.hue_port))
             st = False
 
-        default = "192.168.1.xx"
+        default = self.net_ifc['broadcast']
         if 'isy_host' in self.polyConfig['customParams']:
             self.isy_host = self.polyConfig['customParams']['isy_host']
         else:
