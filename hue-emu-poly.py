@@ -20,13 +20,14 @@ class Controller(polyinterface.Controller):
         super(Controller, self).__init__(polyglot)
         self.name = 'Hue Emulator Controller'
         ifc = self.poly.get_network_interface()
-        self.serverdata = self.poly.get_server_data(check_profile=True)
-        self.l_info('init','Initializing HueEmulator Controller {}'.format(self.serverdata['version']))
+        self.l_info('init','Initializing HueEmulator Controller')
         self.isy_hue_emu = False
         self.sent_cstr = ""
         self.thread = None
 
     def start(self):
+        self.l_info('start','Starting HueEmulator Controller')
+        self.serverdata = self.poly.get_server_data(check_profile=True)
         self.l_info('start','Starting HueEmulator Controller {}'.format(self.serverdata['version']))
         # New vesions need to force an update
         self.check_params()
