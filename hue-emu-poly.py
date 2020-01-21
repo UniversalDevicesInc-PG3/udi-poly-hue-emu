@@ -10,7 +10,6 @@ import logging
 from ISYHueEmulator import ISYHueEmulator
 from traceback import format_exception
 from threading import Thread
-from hue_emu_funcs import get_network_ip,get_server_data
 
 LOGGER = polyinterface.LOGGER
 
@@ -19,16 +18,16 @@ class Controller(polyinterface.Controller):
     def __init__(self, polyglot):
         super(Controller, self).__init__(polyglot)
         self.name = 'Hue Emulator Controller'
-        ifc = self.poly.get_network_interface()
-        self.l_info('init','Initializing HueEmulator Controller')
+        self.l_info('init','Initializing')
         self.isy_hue_emu = False
         self.sent_cstr = ""
         self.thread = None
 
     def start(self):
-        self.l_info('start','Starting HueEmulator Controller')
+        self.l_info('start','Starting')
         self.serverdata = self.poly.get_server_data(check_profile=True)
-        self.l_info('start','Starting HueEmulator Controller {}'.format(self.serverdata['version']))
+        self.l_info('start','Version {}'.format(self.serverdata['version']))
+        self.net_ifc = self.poly.get_network_interface()
         # New vesions need to force an update
         self.check_params()
         self.set_listen(self.get_listen())
@@ -178,16 +177,16 @@ class Controller(polyinterface.Controller):
             self.addNotice("Please set parameters in configuration page and restart this nodeserver")
 
     def l_info(self, name, string):
-        LOGGER.info("Controller:%s: %s" %  (name,string))
+        LOGGER.info("%s:%s: %s" %  (self.name,name,string))
 
     def l_error(self, name, string, exc_info=False):
-        LOGGER.error("Controller:%s: %s" % (name,string), exc_info=exc_info)
+        LOGGER.error("%s:%s: %s" % (self.name,name,string), exc_info=exc_info)
 
     def l_warning(self, name, string):
-        LOGGER.warning("Controller:%s: %s" % (name,string))
+        LOGGER.warning("%s:%s: %s" % (self.name,name,string))
 
     def l_debug(self, name, string):
-        LOGGER.debug("Controller:%s: %s" % (name,string))
+        LOGGER.debug("%s:%s: %s" % (self.name,name,string))
 
     def set_all_logs(self,level):
         LOGGER.setLevel(level)
