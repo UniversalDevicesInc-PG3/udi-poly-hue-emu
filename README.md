@@ -44,6 +44,7 @@ See [POLYGLOT_CONFIG.md](Polyglot Configuration Page)
 
 This is the one and only node for this nodeserver.  It has the following options:
 
+* ISY Connected: The status of the process that maintains a connection to the ISY
 * Debug Mode:  The Logger mode, debug will spew a lot of information, info is he default.
 * Listen:  Enabling this is the same as pushing the button on a hue hub.  You should only turn on when adding the hub to another device.
 
@@ -85,6 +86,9 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.0.7 01/21/2020
+  - Add driver for ISY Connected status
+  - Restart PyISY if it fails
 - 2.0.6
   - Add Table of Spoken devices shown in Configuration page
   - Properly track status if ISY devices so proper values show in Harmony
