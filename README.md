@@ -92,7 +92,7 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 - 2.1.2 01/21/2020
   - Add driver for ISY Connected status
-  - Restart PyISY if it fails
+  - Restart PyISY if it fails https://github.com/jimboca/udi-poly-hue-emu/issues/3
 - 2.1.1 11/04/2019
   - Trap and retry for ISY connection failures which occasionally happen on startup when ISY is overloaded
 - 2.1.0 11/04/2019
