@@ -42,7 +42,7 @@ IMPORTANT: Currently if you 'group device' it will not find your Spoken property
 The 'Configuration' tab contains the default values for all Custom Configuration Parameters.  It also shows what
 devices are found to have spokens.
 
-See [POLYGLOT_CONFIG.md](Polyglot Configuration Page)
+See [Polyglot Configuration Page](POLYGLOT_CONFIG.md)
 
 ### Hue Emulator Controller node
 
