@@ -125,10 +125,10 @@ class Controller(polyinterface.Controller):
             last_version = self.polyConfig['customData']['last_version']
         else:
             last_version = 0
-        self.l_debug("start","last_version={} current_version={}".format(last_version,current_version))
+        self.l_info("start","last_version={} current_version={}".format(last_version,current_version))
         if last_version < current_version:
             if current_Version == '2.1.2':
-                self.l_debug("start","updating myself since last_version {} < {}".format(last_version,current_version))
+                self.l_info("start","updating myself since last_version {} < {}".format(last_version,current_version))
                 # Force an update.
                 self.addNode(self,update=True)
                 self.polyConfig['customData']['last_version'] = current_version
