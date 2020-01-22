@@ -32,6 +32,7 @@ class Controller(polyinterface.Controller):
         self.net_ifc = self.poly.get_network_interface()
         # New vesions need to force an update
         self.check_params()
+        self.check_version()
         self.set_listen(self.get_listen())
         self.set_debug_level(self.getDriver('GV1'))
         self.set_isy_connected(False)
