@@ -1,3 +1,2 @@
-netifaces
 polyinterface >= 2.0.34
 PyISY
