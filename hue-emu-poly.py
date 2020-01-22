@@ -131,7 +131,7 @@ class Controller(polyinterface.Controller):
             self.isy_password,
             )
         self.client_status = "init"
-        self.thread = Thread(target=self._connect)
+        self.thread = Thread(name='PyISY',target=self._connect)
         self.thread.daemon = True
         return self.thread.start()
 
