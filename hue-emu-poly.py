@@ -125,7 +125,7 @@ class Controller(polyinterface.Controller):
         if 'last_version' in self.polyConfig['customData']:
             last_version = self.polyConfig['customData']['last_version']
         else:
-            last_version = 0
+            last_version = '0'
         self.l_info("start","last_version={} current_version={}".format(last_version,current_version))
         if last_version < current_version:
             if current_Version == '2.1.2':
