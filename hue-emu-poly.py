@@ -119,6 +119,21 @@ class Controller(polyinterface.Controller):
             self.poly.add_custom_config_docs(cstr,True)
             self.sent_cstr = cstr
 
+    def check_version(self):
+        current_version = self.serverdata['version']
+        if 'last_version' in self.polyConfig['customData']:
+            last_version = self.polyConfig['customData']['last_version']
+        else:
+            last_version = 0
+        self.l_debug("start","last_version={} current_version={}".format(last_version,current_version))
+        if last_version < current_version:
+            if current_Version == '2.1.2':
+                self.l_debug("start","updating myself since last_version {} < {}".format(last_version,current_version))
+                # Force an update.
+                self.addNode(self,update=True)
+                self.polyConfig['customData']['last_version'] = current_version
+                self.saveCustomData(self.polyConfig['customData'])
+
     def connect(self):
         self.l_info('connect','Starting thread for ISYHueEmulator')
         # TODO: Can we get the ISY info from Polyglot?  If not, then document these
