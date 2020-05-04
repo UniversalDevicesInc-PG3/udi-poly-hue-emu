@@ -7,10 +7,8 @@
 
 import json,os
 
-# Local version of PyISY which supports ISY 5.x
 import sys
-sys.path.insert(0,"PyISY")
-import PyISY
+import pyisy
 import shutil
 import logging
 
@@ -30,7 +28,7 @@ class ISYHueEmulator():
     def __init__(self,host,port,isy_host,isy_port,isy_user,isy_password):
         self.host         = host
         self.port         = port
-        self.isy          = None # The PyISY.ISY object
+        self.isy          = None # The pyisy.ISY object
         self.isy_host     = isy_host
         self.isy_port     = isy_port
         self.isy_user     = isy_user
@@ -53,8 +51,7 @@ class ISYHueEmulator():
             cnt += 1
             self.l_debug('connect','ISY connect try {}'.format(cnt))
             try:
-                # FIXME: How to set different logger level for Events?
-                self.isy = PyISY.ISY(self.isy_host, self.isy_port, self.isy_user, self.isy_password, False, "1.1", LOGGER)
+                self.isy = pyisy.ISY(self.isy_host, self.isy_port, self.isy_user, self.isy_password, False, 1.1, LOGGER)
                 done = True
             except Exception as ex:
                 # Can any other exception happen?
@@ -71,10 +68,6 @@ class ISYHueEmulator():
 
         if not self.isy.connected:
             return False
-        # FIXME: This is not working because PyISY creates a logger with __name__?
-        #logging.getLogger('ISY').setLevel(logging.WARNING)
-        # FIXME: And this doesn't eem to work either?? Still get ISY INFO messages.
-        logging.getLogger(__name__).setLevel(logging.WARNING)
         # Now that we are all setup, we can accept device changes from the isy.
         # FIXME: But this means from the time we connect till now, we can miss
         # FIXME: device status changes, do we care?
@@ -144,17 +137,11 @@ class ISYHueEmulator():
             self.pdevices.append(False)
         self.l_info(lpfx,'max index = {}, len pdevices = {}'.format(max,len(self.pdevices)))
         found_nodes = False
-        for nodeid in self.isy.nodes.nids:
-            child = self.isy.nodes[nodeid]
-            if hasattr(child,'type'):
-                ctype = 'node'
-            elif hasattr(child,'_controllers'):
-                ctype = 'group'
-            else:
-                ctype = 'unknown'
+        for (_, child) in self.isy.nodes:
+            ctype = type(child).__name__
             self.l_info(lpfx,"add_spoken_device: checking {} type={} ctype={}".format(child,type(child),ctype))
             found_nodes = True
-            if ctype == 'node' or ctype == 'group':
+            if ctype in ['Node', 'Group']:
                 #self.l_info(lpfx,child)
                 mnode = child
                 spoken = mnode.spoken
@@ -165,7 +152,7 @@ class ISYHueEmulator():
                         spoken = mnode.name
                     self.l_info(lpfx,"add_spoken_device: name=" + mnode.name + ", spoken=" + str(spoken))
                     cnode = False
-                    if ctype is 'node':
+                    if ctype == "Node":
                         # Is it a controller of a scene?
                         cgroup = mnode.get_groups(responder=False)
                         if len(cgroup) > 0:
@@ -275,8 +262,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.parent  = parent
                 self.node    = node
                 # Used to look for device in list in case name changes.
-                # FIXME: Didn't PyISY used to have .nid property?
-                self.id      = node._id
+                self.id      = node.address
                 if node.dimmable is True:
                     self.type = "Dimmable light"
                 else:
@@ -287,7 +273,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.ct      = False
                 self.bri     = 0
                 self.on      = "false"
-                node.status.subscribe('changed', self.get_all_changed)
+                node.status_events.subscribe(self.get_all_changed)
                 self.parent.l_info('pyhue_isy_node_handler.__init__','name=%s node=%s scene=%s type=%s dimmable=%s' % (self.name, self.node, self.scene, self.type, node.dimmable));
                 super(pyhue_isy_node_handler,self).__init__(name)
 
@@ -296,12 +282,12 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.get_all()
 
         def get_all(self):
-                self.parent.l_info('pyhue:isy_node_handler.get_all','%s status=%s' % (self.name, str(self.node.status)));
+                self.parent.l_info('pyhue:isy_node_handler.get_all','%s status=%s' % (self.name, self.node.status));
                 # Set all the defaults
                 super(pyhue_isy_node_handler,self).get_all()
                 # node.status will be 0-255
-                if str(self.node.status) == "-inf":
-                    self.parent.l_warning('pyhue:isy_node_handler.get_all','%s status=%s, changing to 0' % (self.name, str(self.node.status)));
+                if self.node.status == pyisy.constants.ISY_VALUE_UNKNOWN:
+                    self.parent.l_warning('pyhue:isy_node_handler.get_all','%s status=%s, changing to 0' % (self.name, self.node.status));
                     self.bri = 0
                 else:
                     self.bri = int(self.node.status)
@@ -312,33 +298,32 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.parent.l_info('pyhue:isy_node_handler.get_all','%s on=%s bri=%s' % (self.name, self.on, str(self.bri)));
 
         def set_on(self):
-                self.parent.l_info('pyhue:isy_handler.set_on','%s node.on()' % (self.name));
+                self.parent.l_info('pyhue:isy_handler.set_on','%s node.turn_on()' % (self.name));
                 if self.scene != False:
-                        ret = self.scene.on()
-                        self.parent.l_info('pyhue:isy_handler.set_on','%s scene.on() = %s' % (self.name, str(ret)));
+                        ret = self.scene.turn_on()
+                        self.parent.l_info('pyhue:isy_handler.set_on','%s scene.turn_on() = %s' % (self.name, str(ret)));
                 else:
                         # TODO: If the node is a KPL button, we can't control it, which shows an error.
-                        ret = self.node.on()
+                        ret = self.node.turn_on()
                 return ret
 
         def set_off(self):
-                self.parent.l_info('pyhue:isy_handler.set_off','%s node.off()' % (self.name));
+                self.parent.l_info('pyhue:isy_handler.set_off','%s node.turn_off()' % (self.name));
                 if self.scene != False:
-                        ret = self.scene.off()
-                        self.parent.l_info('pyhue:isy_handler.set_off','%s scene.off() = %s' % (self.name, str(ret)));
+                        ret = self.scene.turn_off()
+                        self.parent.l_info('pyhue:isy_handler.set_off','%s scene.turn_off() = %s' % (self.name, str(ret)));
                 else:
                         # TODO: If the node is a KPL button, we can't control it, which shows an error.
-                        ret = self.node.off()
+                        ret = self.node.turn_off()
                 return ret
 
         def set_bri(self,value):
                 self.parent.l_info('pyhue:isy_handler.set_bri','{} on val={}'.format(self.name, value));
                 # Only set directly on the node when it's dimmable and value is not 0 or 254
-		        # TODO: node.dimmable broken in current PyISY?
                 if value > 0 and value < 254:
                         # val=bri does not work?
-                        ret = self.node.on(value)
-                        self.parent.l_info('pyhue:isy_handler.set_bri','{} node.on({}) = {}'.format(self.name, value, ret));
+                        ret = self.node.turn_on(value)
+                        self.parent.l_info('pyhue:isy_handler.set_bri','{} node.turn_on({}) = {}'.format(self.name, value, ret));
                 else:
                         if value > 0:
                                 ret = self.set_on()

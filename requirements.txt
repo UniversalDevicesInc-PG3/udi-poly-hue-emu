@@ -1,2 +1,2 @@
 polyinterface >= 2.0.34
-PyISY
+pyisy-beta==2.0.0rc1
