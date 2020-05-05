@@ -13,7 +13,7 @@ if [ -e PyISY ]; then
 fi
 # We can use the released 1.1.0 version now.
 # But mine is the same with additional debugging
-git clone https://github.com/jimboca/PyISY.git
+#git clone https://github.com/jimboca/PyISY.git
 
 echo ""
 if [ -e hue-upnp ]; then

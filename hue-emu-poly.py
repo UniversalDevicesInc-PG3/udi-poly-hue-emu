@@ -18,7 +18,7 @@ class Controller(polyinterface.Controller):
     def __init__(self, polyglot):
         super(Controller, self).__init__(polyglot)
         self.name = 'Hue Emulator Controller'
-        self.l_info('init','Initializing')
+        LOGGER.info('Initializing')
         self.isy_hue_emu = False
         self.ucd_check = False
         self.sent_cstr = ""
@@ -26,9 +26,9 @@ class Controller(polyinterface.Controller):
         self.hb = 0
 
     def start(self):
-        self.l_info('start','Starting')
+        LOGGER.info('Starting')
         self.serverdata = self.poly.get_server_data(check_profile=True)
-        self.l_info('start','Version {}'.format(self.serverdata['version']))
+        LOGGER.info('Version {}'.format(self.serverdata['version']))
         self.net_ifc = self.poly.get_network_interface()
         # New vesions need to force an update
         self.check_params()
@@ -38,16 +38,16 @@ class Controller(polyinterface.Controller):
         self.set_isy_connected(False)
         self.heartbeat()
         self.connect()
-        self.l_info('start','done')
+        LOGGER.info('done')
 
     def shortPoll(self):
-        self.l_debug('shortPoll','')
+        LOGGER.debug('')
         self.set_isy_connected()
         self.update_config_docs()
         if self.thread is not None:
             if not self.thread.isAlive():
                 self.thread = None
-                self.l_error('shortPoll',"Thread is dead, restarting.")
+                LOGGER.error("Thread is dead, restarting.")
                 self.check_params() # Reload in case they changed.
                 self.connect()
 
@@ -55,7 +55,7 @@ class Controller(polyinterface.Controller):
         self.heartbeat()
 
     def heartbeat(self):
-        self.l_debug('heartbeat','hb={}'.format(self.hb))
+        LOGGER.debug('hb={}'.format(self.hb))
         if self.hb == 0:
             self.reportCmd("DON",2)
             self.hb = 1
@@ -74,9 +74,9 @@ class Controller(polyinterface.Controller):
         LOGGER.debug('NodeServer stopped.')
 
     def refresh(self, *args, **kwargs):
-        self.l_info('refresh','')
+        LOGGER.info('')
         if self.isy_hue_emu is False:
-            self.l_error('refresh','No Hue Emulator?')
+            LOGGER.error('No Hue Emulator?')
             return
         self.isy_hue_emu.refresh()
         self.update_config_docs()
@@ -88,10 +88,10 @@ class Controller(polyinterface.Controller):
                 if self.poly.supports_feature('customParamsDoc'):
                     self.ucd = True
                 else:
-                    self.l_error('update_config_docs','polyinterface customParamsDoc feature not supported')
+                    LOGGER.error('polyinterface customParamsDoc feature not supported')
                     self.ucd = False
             except AttributeError:
-                self.l_error('update_config_docs','polyinterface supports feature failed?',True)
+                LOGGER.error('polyinterface supports feature failed?',True)
                 self.ucd = False
             self.ucd_check = True
         if self.ucd is False:
@@ -126,17 +126,17 @@ class Controller(polyinterface.Controller):
             last_version = self.polyConfig['customData']['last_version']
         else:
             last_version = '0'
-        self.l_info("start","last_version={} current_version={}".format(last_version,current_version))
+        LOGGER.info("last_version={} current_version={}".format(last_version,current_version))
         if last_version != current_version:
             if current_version == '2.1.2':
-                self.l_info("start","updating myself since last_version {} < {}".format(last_version,current_version))
+                LOGGER.info("updating myself since last_version {} < {}".format(last_version,current_version))
                 # Force an update.
                 self.addNode(self,update=True)
                 self.polyConfig['customData']['last_version'] = current_version
                 self.saveCustomData(self.polyConfig['customData'])
 
     def connect(self):
-        self.l_info('connect','Starting thread for ISYHueEmulator')
+        LOGGER.info('Starting thread for ISYHueEmulator')
         # TODO: Can we get the ISY info from Polyglot?  If not, then document these
         self.isy_hue_emu = ISYHueEmulator(
             self.net_ifc['addr'],
@@ -155,11 +155,11 @@ class Controller(polyinterface.Controller):
         listen = True
         if self.get_listen() == 0:
             listen = False
-        self.l_info("_connect","listen={}".format(listen))
+        LOGGER.info("listen={}".format(listen))
         try:
             self.isy_hue_emu.connect(listen)
         except Exception as ex:
-            self.l_error("PyISY Connection crashed with {}, will restart on next shortPoll".format(ex), exc_info=True)
+            LOGGER.error("PyISY Connection crashed with {}, will restart on next shortPoll".format(ex), exc_info=True)
         # Thread is dead?
         self.set_isy_connected(False)
 
@@ -176,7 +176,7 @@ class Controller(polyinterface.Controller):
             self.hue_port = self.polyConfig['customParams']['hue_port']
         else:
             self.hue_port = default_port
-            self.l_info('check_params','hue_port not defined in customParams, set to default {}'.format(self.hue_port))
+            LOGGER.info('hue_port not defined in customParams, set to default {}'.format(self.hue_port))
             st = False
 
         default = self.net_ifc['broadcast']
@@ -186,7 +186,7 @@ class Controller(polyinterface.Controller):
             self.isy_host = default
         # This can never be the default
         if self.isy_host == default:
-            self.l_info('check_params','isy_host not defined in customParams, set to default {}'.format(default))
+            LOGGER.info('isy_host not defined in customParams, set to default {}'.format(default))
             st = False
 
         default = "80"
@@ -194,7 +194,7 @@ class Controller(polyinterface.Controller):
             self.isy_port = self.polyConfig['customParams']['isy_port']
         else:
             self.isy_port = default
-            self.l_info('check_params','isy_port not defined in customParams, set to default {}'.format(default))
+            LOGGER.info('isy_port not defined in customParams, set to default {}'.format(default))
             st = False
 
         default = "admin"
@@ -202,7 +202,7 @@ class Controller(polyinterface.Controller):
             self.isy_user = self.polyConfig['customParams']['isy_user']
         else:
             self.isy_user = default
-            self.l_info('check_params','isy_user not defined in customParams, set to default {}'.format(default))
+            LOGGER.info('isy_user not defined in customParams, set to default {}'.format(default))
             st = False
 
         default = "your_isy_password"
@@ -212,7 +212,7 @@ class Controller(polyinterface.Controller):
             self.isy_password = default
         # This can never be the default
         if self.isy_password == default:
-            self.l_info('check_params','isy_password not defined in customParams, set to default {}'.format(default))
+            LOGGER.info('isy_password not defined in customParams, set to default {}'.format(default))
             st = False
 
         # Make sure they are in the params
@@ -222,30 +222,18 @@ class Controller(polyinterface.Controller):
         if not st:
             self.addNotice("Please set parameters in configuration page and restart this nodeserver")
 
-    def l_info(self, name, string):
-        LOGGER.info("%s:%s: %s" %  (self.name,name,string))
-
-    def l_error(self, name, string, exc_info=False):
-        LOGGER.error("%s:%s: %s" % (self.name,name,string), exc_info=exc_info)
-
-    def l_warning(self, name, string):
-        LOGGER.warning("%s:%s: %s" % (self.name,name,string))
-
-    def l_debug(self, name, string):
-        LOGGER.debug("%s:%s: %s" % (self.name,name,string))
-
     def set_all_logs(self,level):
         LOGGER.setLevel(level)
         #logging.getLogger('requests').setLevel(level)
 
     def set_debug_level(self,level):
-        self.l_info('set_debug_level',level)
+        LOGGER.info(str(level))
         if level is None:
             level = 20
         level = int(level)
         if level == 0:
             level = 20
-        self.l_info('set_debug_level','Set GV1 to {}'.format(level))
+        LOGGER.info('Set GV1 to {}'.format(level))
         self.setDriver('GV1', level)
         # 0=All 10=Debug are the same because 0 (NOTSET) doesn't show everything.
         if level == 10:
@@ -259,18 +247,18 @@ class Controller(polyinterface.Controller):
         elif level == 50:
             self.set_all_logs(logging.CRITICAL)
         else:
-            self.l_error("set_debug_level","Unknown level {}".format(level))
+            LOGGER.error("Unknown level {}".format(level))
 
     def get_listen(self):
-        self.l_info('get_listen','')
+        LOGGER.info('')
         val = self.getDriver('GV2')
         if val is None:
             val = 1
-        self.l_info('get_listen',val)
+        LOGGER.info(val)
         return int(val)
 
     def set_listen(self,val):
-        self.l_info('set_listen','Set to {}'.format(val))
+        LOGGER.info('Set to {}'.format(val))
         if self.isy_hue_emu is not False:
             if val == 0:
                 self.isy_hue_emu.stop_listener()
@@ -291,7 +279,7 @@ class Controller(polyinterface.Controller):
         self.setDriver('GV0', 1 if val else 0)
 
     def cmd_update_profile(self,command):
-        self.l_info('update_profile','')
+        LOGGER.info('update_profile','')
         st = self.poly.installprofile()
         return st
 
@@ -300,12 +288,12 @@ class Controller(polyinterface.Controller):
 
     def cmd_set_debug_mode(self,command):
         val = int(command.get('value'))
-        self.l_info("cmd_set_debug_mode",val)
+        LOGGER.info(val)
         self.set_debug_level(val)
 
     def cmd_set_listen(self,command):
         val = int(command.get('value'))
-        self.l_info("cmd_set_listen",val)
+        LOGGER.info(val)
         self.set_listen(val)
 
     id = 'controller'
