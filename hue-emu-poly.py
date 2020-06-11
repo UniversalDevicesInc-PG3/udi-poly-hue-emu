@@ -52,13 +52,13 @@ class Controller(polyinterface.Controller):
                 LOGGER.error("Thread is dead, restarting.")
                 self.check_params() # Reload in case they changed.
                 self.connect()
+
+    def longPoll(self):
+        self.heartbeat()
         if self.startup_listen > 0:
             self.startup_listen -= 1
         else:
             self.set_listen(0)
-
-    def longPoll(self):
-        self.heartbeat()
 
     def heartbeat(self):
         LOGGER.debug('hb={}'.format(self.hb))

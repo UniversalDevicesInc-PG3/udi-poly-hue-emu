@@ -37,6 +37,7 @@ class ISYHueEmulator():
         self.lpfx = 'pyhue:'
         self.listening = False
         self.config_file = 'config.json'
+        self.hue_upnp     = False
         self.load_config()
 
     def isy_connected(self):
@@ -88,10 +89,12 @@ class ISYHueEmulator():
         self.hue_upnp.run(listen=listen)
 
     def start_listener(self):
-        self.hue_upnp.start_listener()
+        if self.hue_upnp is not False:
+            self.hue_upnp.start_listener()
 
     def stop_listener(self):
-        self.hue_upnp.stop_listener()
+        if self.hue_upnp is not False:
+            self.hue_upnp.stop_listener()
 
     def save_config(self):
         LOGGER.info(self.config_file)
