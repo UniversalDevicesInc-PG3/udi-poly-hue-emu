@@ -33,7 +33,9 @@ class Controller(polyinterface.Controller):
         # New vesions need to force an update
         self.check_params()
         self.check_version()
-        self.set_listen(self.get_listen())
+        # We listen for new connections on restart...
+        self.startup_listen = 5
+        self.set_listen(1)
         self.set_debug_level(self.getDriver('GV1'))
         self.set_isy_connected(False)
         self.heartbeat()
@@ -50,6 +52,10 @@ class Controller(polyinterface.Controller):
                 LOGGER.error("Thread is dead, restarting.")
                 self.check_params() # Reload in case they changed.
                 self.connect()
+        if self.startup_listen > 0:
+            self.startup_listen -= 1
+        else:
+            self.set_listen(0)
 
     def longPoll(self):
         self.heartbeat()

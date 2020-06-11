@@ -13,7 +13,7 @@
         {
             "title": "hue-emu: A NodeServer for Emulating a Hue Hub of ISY Devices",
             "author": "JimBoCA",
-            "version": "2.1.2",
+            "version": "2.2.0",
             "date": "June 17, 2018",
             "source": "https://github.com/jimboca/udi-poly-hue-emu-python",
             "license": "https://raw.githubusercontent.com/Einstein42/udi-poly-template-python/master/LICENSE"
