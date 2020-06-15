@@ -43,11 +43,10 @@ class Controller(polyinterface.Controller):
         LOGGER.info('done')
 
     def shortPoll(self):
-        LOGGER.debug('')
         self.set_isy_connected()
         self.update_config_docs()
         if self.thread is not None:
-            if not self.thread.isAlive():
+            if not self.thread.is_alive():
                 self.thread = None
                 LOGGER.error("Thread is dead, restarting.")
                 self.check_params() # Reload in case they changed.
