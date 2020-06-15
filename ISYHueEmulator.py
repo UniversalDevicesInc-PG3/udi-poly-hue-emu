@@ -18,8 +18,7 @@ from hueUpnp import hue_upnp,hue_upnp_super_handler
 # This loads the default hue-upnp config which we will use as a starting point.
 import hueUpnp_config
 
-import polyinterface
-LOGGER = polyinterface.LOGGER
+LOGGER = logging.getLogger(__name__)
 
 class ISYHueEmulator():
 
