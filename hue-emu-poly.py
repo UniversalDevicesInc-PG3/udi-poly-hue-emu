@@ -15,6 +15,9 @@ LOGGER = polyinterface.LOGGER
 
 class Controller(polyinterface.Controller):
 
+    # Number of longPoll calls to timeout listen
+    LISTEN_TIMEOUT = 5
+
     def __init__(self, polyglot):
         super(Controller, self).__init__(polyglot)
         self.name = 'Hue Emulator Controller'
@@ -27,6 +30,7 @@ class Controller(polyinterface.Controller):
 
     def start(self):
         LOGGER.info('Starting')
+        self.initializing = True
         self.serverdata = self.poly.get_server_data(check_profile=True)
         LOGGER.info('Version {}'.format(self.serverdata['version']))
         self.net_ifc = self.poly.get_network_interface()
@@ -34,7 +38,6 @@ class Controller(polyinterface.Controller):
         self.check_params()
         self.check_version()
         # We listen for new connections on restart...
-        self.startup_listen = 5
         self.set_listen(1)
         self.set_debug_level(self.getDriver('GV1'))
         self.set_isy_connected(False)
@@ -54,10 +57,13 @@ class Controller(polyinterface.Controller):
 
     def longPoll(self):
         self.heartbeat()
-        if self.startup_listen > 0:
-            self.startup_listen -= 1
-        else:
-            self.set_listen(0)
+        if self.initializing:
+            return
+        if self.get_listen() == 1:
+            if self.listen_cnt > 0:
+                self.listen_cnt -= 1
+            else:
+                self.set_listen(0)
 
     def heartbeat(self):
         LOGGER.debug('hb={}'.format(self.hb))
@@ -161,6 +167,7 @@ class Controller(polyinterface.Controller):
         if self.get_listen() == 0:
             listen = False
         LOGGER.info("listen={}".format(listen))
+        self.initializing = False
         try:
             self.isy_hue_emu.connect(listen)
         except Exception as ex:
@@ -269,6 +276,7 @@ class Controller(polyinterface.Controller):
                 self.isy_hue_emu.stop_listener()
             else:
                 self.isy_hue_emu.start_listener()
+        self.listen_cnt = Controller.LISTEN_TIMEOUT
         self.setDriver('GV2', val)
 
     def set_isy_connected(self,val=None):
