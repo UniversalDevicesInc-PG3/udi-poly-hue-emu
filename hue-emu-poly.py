@@ -237,7 +237,7 @@ class Controller(polyinterface.Controller):
     def set_all_logs(self,level):
         LOGGER.setLevel(level)
         # Set modules to same logging level.
-        LOG_HANDLER.set_basic_config(True,level)
+        polyinterface.LOG_HANDLER.set_basic_config(True,level)
         #logging.getLogger('requests').setLevel(level)
 
     def set_debug_level(self,level):
