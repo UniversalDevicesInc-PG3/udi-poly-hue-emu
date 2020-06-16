@@ -264,15 +264,15 @@ class Controller(polyinterface.Controller):
             LOGGER.error("Unknown level {}".format(level))
 
     def get_listen(self):
-        LOGGER.info('')
+        LOGGER.debug('')
         val = self.getDriver('GV2')
         if val is None:
             val = 1
-        LOGGER.info(val)
+        LOGGER.debug(val)
         return int(val)
 
     def set_listen(self,val):
-        LOGGER.info('Set to {}'.format(val))
+        LOGGER.warning('Set to {}'.format(val))
         if self.isy_hue_emu is not False:
             if val == 0:
                 self.isy_hue_emu.stop_listener()
