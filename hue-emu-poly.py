@@ -164,7 +164,7 @@ class Controller(polyinterface.Controller):
 
     def _connect(self):
         listen = True
-        if self.initializing is not False and self.get_listen() == 0:
+        if self.initializing is False and self.get_listen() == 0:
             listen = False
         LOGGER.info("listen={}".format(listen))
         self.initializing = False
