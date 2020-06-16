@@ -60,6 +60,7 @@ class Controller(polyinterface.Controller):
         if self.initializing:
             return
         if self.get_listen() == 1:
+            LOGGER.warning('Listen Count = {}'.format(self.listen_cnt))
             if self.listen_cnt > 0:
                 self.listen_cnt -= 1
             else:
