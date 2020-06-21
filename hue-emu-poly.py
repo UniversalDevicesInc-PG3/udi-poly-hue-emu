@@ -60,6 +60,7 @@ class Controller(polyinterface.Controller):
         if self.initializing:
             return
         if self.get_listen() == 1:
+            LOGGER.warning('Listen Count = {}'.format(self.listen_cnt))
             if self.listen_cnt > 0:
                 self.listen_cnt -= 1
             else:
@@ -163,9 +164,7 @@ class Controller(polyinterface.Controller):
         return self.thread.start()
 
     def _connect(self):
-        listen = True
-        if self.get_listen() == 0:
-            listen = False
+        listen = True if self.initializing or self.get_listen() == 1 else False
         LOGGER.info("listen={}".format(listen))
         self.initializing = False
         try:
@@ -264,15 +263,15 @@ class Controller(polyinterface.Controller):
             LOGGER.error("Unknown level {}".format(level))
 
     def get_listen(self):
-        LOGGER.info('')
+        LOGGER.debug('')
         val = self.getDriver('GV2')
         if val is None:
             val = 1
-        LOGGER.info(val)
+        LOGGER.debug(val)
         return int(val)
 
     def set_listen(self,val):
-        LOGGER.info('Set to {}'.format(val))
+        LOGGER.warning('Set to {}'.format(val))
         if self.isy_hue_emu is not False:
             if val == 0:
                 self.isy_hue_emu.stop_listener()
