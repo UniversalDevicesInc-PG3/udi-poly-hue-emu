@@ -319,7 +319,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 else:
                         if value > 0:
                                 ret = self.set_on()
-                                self.bri = 255
+                                self.bri = 254
                         else:
                                 ret = self.set_off()
                                 self.bri = 0
