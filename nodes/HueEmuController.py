@@ -138,7 +138,7 @@ class HueEmuController(Controller):
             last_version = '0'
         LOGGER.info("last_version={} current_version={}".format(last_version,current_version))
         if last_version != current_version:
-            if current_version == '2.2.1':
+            if current_version == '2.1.2':
                 LOGGER.info("updating myself since last_version {} < {}".format(last_version,current_version))
                 # Force an update.
                 self.addNode(self,update=True)
