@@ -234,7 +234,7 @@ class HueEmuController(Controller):
     def set_all_logs(self,level):
         LOGGER.setLevel(level)
         # Set modules to same logging level.
-        polyinterface.LOG_HANDLER.set_basic_config(True,level)
+        LOG_HANDLER.set_basic_config(True,level)
         #logging.getLogger('requests').setLevel(level)
 
     def set_debug_level(self,level):
