@@ -90,6 +90,10 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.2.1 dev
+  - Reorganize code
+  - Fix when brightening a device it could wrap around and go back to default on value
+  - TODO Update logging levels to control module loggers
 - 2.2.0 06/10/2020
   - Support for PyISY 2 which is now more robust.  Thanks to @shbatm for the help.
   - Listen turned off after 5 long poll's

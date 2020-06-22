@@ -1,5 +1,5 @@
 #
-# The ISYHueEmulator object.
+# The ISYHueEmu object.
 #
 # It is contained in a seperate object because the intention was to allow running
 # just this file to test, but haven't done that yet...
@@ -20,7 +20,7 @@ import hueUpnp_config
 
 LOGGER = logging.getLogger(__name__)
 
-class ISYHueEmulator():
+class ISYHueEmu():
 
     config_version = 1
 
@@ -79,7 +79,6 @@ class ISYHueEmulator():
         #
         LOGGER.info('Default config: {}'.format(hueUpnp_config))
         hueUpnp_config.devices = self.pdevices
-        hueUpnp_config.logger  = LOGGER
         hueUpnp_config.standard['IP']        = self.host
         hueUpnp_config.standard['PORT']      = self.port
         hueUpnp_config.standard['DEBUG']     = True

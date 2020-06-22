@@ -5,10 +5,12 @@ CMD-ctl-UPDATE_PROFILE-NAME = Update Profile
 ST-ctl-ST-NAME = NodeServer Online
 ST-ctl-GV0-NAME = ISY Connected
 ST-ctl-GV1-NAME = Debug Mode
+ST-ctl-GV3-NAME = Debug Mode HueUpnp
 ST-ctl-GV2-NAME = Listen
 
 CMD-SET_DEBUGMODE-NAME = Debug Level
 CDM-0 = All
+CDM-9 = Debug + Modules
 CDM-10 = Debug
 CDM-20 = Info
 CDM-30 = Warning

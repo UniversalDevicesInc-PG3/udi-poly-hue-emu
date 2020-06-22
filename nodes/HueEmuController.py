@@ -7,7 +7,7 @@ from polyinterface import Controller,LOGGER,LOG_HANDLER
 import sys
 import time
 import logging
-from ISYHueEmulator import ISYHueEmulator
+from ISYHueEmu import ISYHueEmu
 from traceback import format_exception
 from threading import Thread
 
@@ -146,9 +146,9 @@ class HueEmuController(Controller):
                 self.saveCustomData(self.polyConfig['customData'])
 
     def connect(self):
-        LOGGER.info('Starting thread for ISYHueEmulator')
+        LOGGER.info('Starting thread for ISYHueEmu')
         # TODO: Can we get the ISY info from Polyglot?  If not, then document these
-        self.isy_hue_emu = ISYHueEmulator(
+        self.isy_hue_emu = ISYHueEmu(
             self.net_ifc['addr'],
             self.hue_port,
             self.isy_host,
@@ -231,11 +231,8 @@ class HueEmuController(Controller):
         if not st:
             self.addNotice("Please set parameters in configuration page and restart this nodeserver")
 
-    def set_all_logs(self,level):
-        LOGGER.setLevel(level)
-        # Set modules to same logging level.
-        LOG_HANDLER.set_basic_config(True,level)
-        #logging.getLogger('requests').setLevel(level)
+    def set_module_logs(self,level):
+        logging.getLogger('urllib3').setLevel(level)
 
     def set_debug_level(self,level):
         LOGGER.info(str(level))
@@ -247,16 +244,53 @@ class HueEmuController(Controller):
         LOGGER.info('Set GV1 to {}'.format(level))
         self.setDriver('GV1', level)
         # 0=All 10=Debug are the same because 0 (NOTSET) doesn't show everything.
-        if level == 10:
-            self.set_all_logs(logging.DEBUG)
-        elif level == 20:
-            self.set_all_logs(logging.INFO)
-        elif level == 30:
-            self.set_all_logs(logging.WARNING)
-        elif level == 40:
-            self.set_all_logs(logging.ERROR)
-        elif level == 50:
-            self.set_all_logs(logging.CRITICAL)
+        if level <= 10:
+            LOGGER.setLevel(logging.DEBUG)
+        elif level <= 20:
+            LOGGER.setLevel(logging.INFO)
+        elif level <= 30:
+            LOGGER.setLevel(logging.WARNING)
+        elif level <= 40:
+            LOGGER.setLevel(logging.ERROR)
+        elif level <= 50:
+            LOGGER.setLevel(logging.CRITICAL)
+        else:
+            LOGGER.error("Unknown level {}".format(level))
+        # this is the best way to control logging for modules, so you can
+        # still see warnings and errors
+        if level < 10:
+            self.set_module_logs(logging.DEBUG)
+        else:
+            # Just warnigns for the modules unless in module debug mode
+            self.set_module_logs(logging.WARNING)
+        # Or you can do this and you will never see mention of module logging
+        #if level < 10:
+        #    LOG_HANDLER.set_basic_config(True,logging.DEBUG)
+        #else:
+        #    # This is the polyinterface default
+        #    LOG_HANDLER.set_basic_config(True,logging.WARNING)
+
+    def set_debug_level_hueupnp(self,level):
+        LOGGER.info(str(level))
+        if level is None:
+            level = 30
+        level = int(level)
+        if level == 0:
+            level = 30
+        LOGGER.info('Set GV2 to {}'.format(level))
+        self.setDriver('GV2', level)
+        L = logging.getLogger('hueUpnp')
+        # 0=All 10=Debug are the same because 0 (NOTSET) doesn't show everything.
+        if level <= 10:
+            L.setLevel(logging.DEBUG)
+        elif level <= 20:
+            L.setLevel(logging.INFO)
+        elif level <= 30:
+            L.setLevel(logging.WARNING)
+        elif level <= 40:
+            L.setLevel(logging.ERROR)
+        elif level <= 50:
+            L.setLevel(logging.CRITICAL)
         else:
             LOGGER.error("Unknown level {}".format(level))
 
@@ -319,5 +353,6 @@ class HueEmuController(Controller):
         {'driver': 'ST',  'value': 1,  'uom': 2},   # Node Status
         {'driver': 'GV0', 'value': 0,  'uom': 2},   # ISY Connected
         {'driver': 'GV1', 'value': 20, 'uom': 25},  # integer: Log/Debug Mode
-        {'driver': 'GV2', 'value': 0,  'uom': 2}    # Listen
+        {'driver': 'GV2', 'value': 0,  'uom': 2},   # Listen
+        {'driver': 'GV3', 'value': 30, 'uom': 25}   # hueUpnp debug mode
     ]
