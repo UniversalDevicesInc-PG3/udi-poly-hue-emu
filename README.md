@@ -91,8 +91,9 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 # Release Notes
 
 - 2.2.0 06/10/2020
-  - Support for PyISY 2
-  - Listen is on for restart for 5 long polls
+  - Support for PyISY 2 which is now more robust.  Thanks to @shbatm for the help.
+  - Listen turned off after 5 long poll's
+  - Listen is on at startup
 - 2.1.2 01/21/2020
   - Add driver for ISY Connected status
   - Restart PyISY if it fails https://github.com/jimboca/udi-poly-hue-emu/issues/3

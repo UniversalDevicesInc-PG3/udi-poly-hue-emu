@@ -18,8 +18,7 @@ from hueUpnp import hue_upnp,hue_upnp_super_handler
 # This loads the default hue-upnp config which we will use as a starting point.
 import hueUpnp_config
 
-import polyinterface
-LOGGER = polyinterface.LOGGER
+LOGGER = logging.getLogger(__name__)
 
 class ISYHueEmulator():
 
@@ -320,7 +319,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 else:
                         if value > 0:
                                 ret = self.set_on()
-                                self.bri = 255
+                                self.bri = 254
                         else:
                                 ret = self.set_off()
                                 self.bri = 0
