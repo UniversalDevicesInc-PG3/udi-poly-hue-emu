@@ -246,17 +246,20 @@ class HueEmuController(Controller):
         self.setDriver('GV1', level)
         # 0=All 10=Debug are the same because 0 (NOTSET) doesn't show everything.
         if level <= 10:
-            LOGGER.setLevel(logging.DEBUG)
+            l = logging.DEBUG
         elif level <= 20:
-            LOGGER.setLevel(logging.INFO)
+            l = logging.INFO
         elif level <= 30:
-            LOGGER.setLevel(logging.WARNING)
+            l = logging.WARNING
         elif level <= 40:
-            LOGGER.setLevel(logging.ERROR)
+            l = logging.ERROR
         elif level <= 50:
-            LOGGER.setLevel(logging.CRITICAL)
+            l = logging.CRITICAL
         else:
             LOGGER.error("Unknown level {}".format(level))
+            return
+        LOGGER.setLevel(l)
+        logging.getLogger('hueUpnp').setLevel(l)
         # this is the best way to control logging for modules, so you can
         # still see warnings and errors
         if level < 10:
@@ -270,30 +273,6 @@ class HueEmuController(Controller):
         #else:
         #    # This is the polyinterface default
         #    LOG_HANDLER.set_basic_config(True,logging.WARNING)
-
-    def set_debug_level_hueupnp(self,level):
-        LOGGER.info(str(level))
-        if level is None:
-            level = 30
-        level = int(level)
-        if level == 0:
-            level = 30
-        LOGGER.info('Set GV3 to {}'.format(level))
-        self.setDriver('GV3', level)
-        L = logging.getLogger('hueUpnp')
-        # 0=All 10=Debug are the same because 0 (NOTSET) doesn't show everything.
-        if level <= 10:
-            L.setLevel(logging.DEBUG)
-        elif level <= 20:
-            L.setLevel(logging.INFO)
-        elif level <= 30:
-            L.setLevel(logging.WARNING)
-        elif level <= 40:
-            L.setLevel(logging.ERROR)
-        elif level <= 50:
-            L.setLevel(logging.CRITICAL)
-        else:
-            LOGGER.error("Unknown level {}".format(level))
 
     def get_listen(self):
         LOGGER.debug('')
@@ -338,11 +317,6 @@ class HueEmuController(Controller):
         LOGGER.info(val)
         self.set_debug_level(val)
 
-    def cmd_set_debug_mode_hueupnp(self,command):
-        val = int(command.get('value'))
-        LOGGER.info(val)
-        self.set_debug_level_hueupnp(val)
-
     def cmd_set_listen(self,command):
         val = int(command.get('value'))
         LOGGER.info(val)
@@ -352,8 +326,7 @@ class HueEmuController(Controller):
     commands = {
         'REFRESH': cmd_refresh,
         'UPDATE_PROFILE': cmd_update_profile,
-        'SET_DEBUGMODE2': cmd_set_debug_mode,
-        'SET_DEBUGMODE' : cmd_set_debug_mode_hueupnp,
+        'SET_DEBUGMODE': cmd_set_debug_mode,
         'SET_LISTEN': cmd_set_listen,
     }
     drivers = [
@@ -361,5 +334,4 @@ class HueEmuController(Controller):
         {'driver': 'GV0', 'value': 0,  'uom': 2},   # ISY Connected
         {'driver': 'GV1', 'value': 20, 'uom': 25},  # integer: Log/Debug Mode
         {'driver': 'GV2', 'value': 0,  'uom': 2},   # Listen
-        {'driver': 'GV3', 'value': 30, 'uom': 25}   # hueUpnp debug mode
     ]

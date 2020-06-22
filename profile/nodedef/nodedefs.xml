@@ -8,9 +8,7 @@
           <!-- ISY Connected -->
           <st id="GV0" editor="bool" />
           <!-- Debug Mode -->
-          <st id="GV1" editor="DEBUGMODE2" />
-          <!-- Debug Mode -->
-          <st id="GV3" editor="DEBUGMODE" />
+          <st id="GV1" editor="DEBUGMODE" />
           <!-- Listen -->
           <st id="GV2" editor="bool" />
     		</sts>
@@ -20,11 +18,8 @@
             <cmd id="DOF" />
           </sends>
           <accepts>
-            <cmd id="SET_DEBUGMODE2">
-              <p id="" editor="DEBUGMODE2" init="GV1" />
-            </cmd>
             <cmd id="SET_DEBUGMODE">
-              <p id="" editor="DEBUGMODE" init="GV3" />
+              <p id="" editor="DEBUGMODE" init="GV1" />
             </cmd>
               <cmd id="SET_LISTEN">
                 <p id="" editor="bool" init="GV2" />

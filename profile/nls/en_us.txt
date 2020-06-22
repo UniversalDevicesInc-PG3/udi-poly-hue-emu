@@ -8,8 +8,7 @@ ST-ctl-GV1-NAME = Debug Mode
 ST-ctl-GV3-NAME = Debug Mode HueUpnp
 ST-ctl-GV2-NAME = Listen
 
-CMD-SET_DEBUGMODE2-NAME = Debug Level
-CMD-SET_DEBUGMODE-NAME = Debug Level HueUpnp
+CMD-SET_DEBUGMODE-NAME = Debug Level
 CDM-0 = All
 CDM-9 = Debug + Modules
 CDM-10 = Debug
