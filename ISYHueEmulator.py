@@ -311,18 +311,16 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
 
         def set_bri(self,value):
                 LOGGER.info('{} on val={}'.format(self.name, value));
-                # Only set directly on the node when it's dimmable and value is not 0 or 254
-                if value > 0 and value < 254:
+                # Only set directly on the node when it's dimmable and value is not 0 or 255
+                # 06/21/2020: changed to allow passing 255 value.
+                # TODO: But should we also check if dimmable?
+                if value > 0:
                         # val=bri does not work?
                         ret = self.node.turn_on(value)
                         LOGGER.info('{} node.turn_on({}) = {}'.format(self.name, value, ret));
                 else:
-                        if value > 0:
-                                ret = self.set_on()
-                                self.bri = 254
-                        else:
-                                ret = self.set_off()
-                                self.bri = 0
+                        ret = self.set_off()
+                        self.bri = 0
                 LOGGER.info('{} on={} bri={}'.format(self.name, self.on, self.bri));
                 return ret
 
