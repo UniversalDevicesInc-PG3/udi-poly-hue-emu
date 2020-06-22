@@ -338,6 +338,11 @@ class HueEmuController(Controller):
         LOGGER.info(val)
         self.set_debug_level(val)
 
+    def cmd_set_debug_mode_hueupnp(self,command):
+        val = int(command.get('value'))
+        LOGGER.info(val)
+        self.set_debug_level_hueupnp(val)
+
     def cmd_set_listen(self,command):
         val = int(command.get('value'))
         LOGGER.info(val)
@@ -347,7 +352,8 @@ class HueEmuController(Controller):
     commands = {
         'REFRESH': cmd_refresh,
         'UPDATE_PROFILE': cmd_update_profile,
-        'SET_DEBUGMODE': cmd_set_debug_mode,
+        'SET_DEBUGMODE2': cmd_set_debug_mode,
+        'SET_DEBUGMODE' : cmd_set_debug_mode_hueupnp,
         'SET_LISTEN': cmd_set_listen,
     }
     drivers = [
