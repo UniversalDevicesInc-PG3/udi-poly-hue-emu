@@ -10,7 +10,7 @@
           <!-- Debug Mode -->
           <st id="GV1" editor="DEBUGMODE2" />
           <!-- Debug Mode -->
-          <st id="GV3" editor="DEBUGMODE3" />
+          <st id="GV3" editor="DEBUGMODE" />
           <!-- Listen -->
           <st id="GV2" editor="bool" />
     		</sts>
