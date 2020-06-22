@@ -278,8 +278,8 @@ class HueEmuController(Controller):
         level = int(level)
         if level == 0:
             level = 30
-        LOGGER.info('Set GV2 to {}'.format(level))
-        self.setDriver('GV2', level)
+        LOGGER.info('Set GV3 to {}'.format(level))
+        self.setDriver('GV3', level)
         L = logging.getLogger('hueUpnp')
         # 0=All 10=Debug are the same because 0 (NOTSET) doesn't show everything.
         if level <= 10:
