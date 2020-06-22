@@ -38,6 +38,7 @@ class HueEmuController(Controller):
         # We listen for new connections on restart...
         self.set_listen(1)
         self.set_debug_level(self.getDriver('GV1'))
+        self.set_debug_level_hueupnp(self.getDriver('GV3'))
         self.set_isy_connected(False)
         self.heartbeat()
         self.connect()
