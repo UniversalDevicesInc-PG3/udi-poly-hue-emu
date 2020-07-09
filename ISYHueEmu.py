@@ -315,11 +315,13 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # 06/21/2020: changed to allow passing 255 value.
                 # TODO: But should we also check if dimmable?
                 if value > 0:
-                        if self.node.dimmable:
+                        if value < 254:
                             # val=bri does not work?
                             ret = self.node.turn_on(value)
                         else:
-                            ret = self.node.turn_on()
+                            # val > 254, so just turn on.  This fixes defines that are not dimmable
+                            # like kpl buttons which can't be controlled directly.
+                            ret = self.set_on()
                         LOGGER.info('{} node.turn_on({}) = {}'.format(self.name, value, ret));
                 else:
                         ret = self.set_off()
