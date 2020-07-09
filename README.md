@@ -90,6 +90,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.2.2
+  - Fix https://github.com/jimboca/udi-poly-hue-emu/issues/8
 - 2.2.1 06/22/2020
   - Reorganize code
   - Fix when brightening a device it could wrap around and go back to default on value
