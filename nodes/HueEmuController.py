@@ -259,6 +259,7 @@ class HueEmuController(Controller):
             return
         LOGGER.setLevel(l)
         logging.getLogger('hueUpnp').setLevel(l)
+        logging.getLogger('ISYHueEmu').setLevel(l)
         # this is the best way to control logging for modules, so you can
         # still see warnings and errors
         if level < 10:

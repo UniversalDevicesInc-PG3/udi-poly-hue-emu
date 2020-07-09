@@ -296,6 +296,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 else:
                         # TODO: If the node is a KPL button, we can't control it, which shows an error.
                         ret = self.node.turn_on()
+                        LOGGER.info('%s node.turn_on() = %s' % (self.name, str(ret)));
                 return ret
 
         def set_off(self):
