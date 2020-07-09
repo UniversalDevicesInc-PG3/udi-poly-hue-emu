@@ -310,7 +310,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 return ret
 
         def set_bri(self,value):
-                LOGGER.info('{} on val={}'.format(self.name, value));
+                LOGGER.info('{} on val={} dimmable={}'.format(self.name, value, self.node.dimmable));
                 # Only set directly on the node when it's dimmable and value is not 0 or 255
                 # 06/21/2020: changed to allow passing 255 value.
                 # TODO: But should we also check if dimmable?
