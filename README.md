@@ -90,6 +90,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.2.3 07/23/2020
+  - Fix crash for Update Profile
 - 2.2.2 07/08/2020
   - Fix https://github.com/jimboca/udi-poly-hue-emu/issues/8
 - 2.2.1 06/22/2020

@@ -305,7 +305,7 @@ class HueEmuController(Controller):
         self.setDriver('GV0', 1 if val else 0)
 
     def cmd_update_profile(self,command):
-        LOGGER.info('update_profile','')
+        LOGGER.info('update_profile')
         st = self.poly.installprofile()
         return st
 
