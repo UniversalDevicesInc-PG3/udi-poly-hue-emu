@@ -251,6 +251,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # Used to look for device in list in case name changes.
                 self.id      = node.address
                 self.scene   = scene
+                self.dimmable = False
                 LOGGER.info('name=%s node=%s scene=%s protocol=%s' % (self.name, self.node, self.scene, node.protocol));
                 if node.protocol == pyisy.constants.PROTO_GROUP:
                     # TODO: Should this be a Hue Scene?
@@ -258,6 +259,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 else:
                     if node.dimmable is True:
                         self.type = "Dimmable light"
+                        self.dimmable = True
                     else:
                         self.type = "On/off light"
                 self.xy      = False
@@ -310,7 +312,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 return ret
 
         def set_bri(self,value):
-                LOGGER.info('{} on val={} dimmable={}'.format(self.name, value, self.node.dimmable));
+                LOGGER.info('{} on val={} dimmable={}'.format(self.name, value, self.dimmable));
                 # Only set directly on the node when it's dimmable and value is not 0 or 255
                 # 06/21/2020: changed to allow passing 255 value.
                 # TODO: But should we also check if dimmable?
