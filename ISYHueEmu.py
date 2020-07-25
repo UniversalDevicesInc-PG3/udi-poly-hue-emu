@@ -267,7 +267,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.bri     = 0
                 self.on      = "false"
                 node.status_events.subscribe(self.get_all_changed)
-                LOGGER.info('name=%s node=%s scene=%s type=%s' % (self.name, self.node, self.scene, self.type));
+                LOGGER.info('name=%s node=%s scene=%s type=%s dimmable=%s' % (self.name, self.node, self.scene, self.type, self.dimmable));
                 super(pyhue_isy_node_handler,self).__init__(name)
 
         def get_all_changed(self,e):
@@ -317,7 +317,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # 06/21/2020: changed to allow passing 255 value.
                 # TODO: But should we also check if dimmable?
                 if value > 0:
-                        if value < 254:
+                        if self.dimmable:
                             # val=bri does not work?
                             ret = self.node.turn_on(value)
                         else:
