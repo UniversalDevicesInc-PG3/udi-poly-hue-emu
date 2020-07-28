@@ -338,13 +338,13 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                         else:
                             if self.dimmable:
                                 # val=bri does not work?
-                                LOGGER.info('{} node.turn_on({}) = {}'.format(self.name, value, ret));
                                 ret = self.node.turn_on(value)
                             else:
                                 # val > 254, so just turn on.  This fixes defines that are not dimmable
                                 # like kpl buttons which can't be controlled directly.
                                 LOGGER.info('{} node.set_on()'.format(self.name));
                                 ret = self.set_on()
+                            LOGGER.info('{} node.turn_on({}) = {}'.format(self.name, value, ret));
                 else:
                         ret = self.set_off()
                         self.bri = 0
