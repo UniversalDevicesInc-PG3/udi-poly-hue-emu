@@ -252,16 +252,28 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.id      = node.address
                 self.scene   = scene
                 self.dimmable = False
+                self.is_scene = False
+                self.set_scene = False
+                # By default we control the main node, which can be a scene
+                self.control_device = self.node
                 LOGGER.info('name=%s node=%s scene=%s protocol=%s' % (self.name, self.node, self.scene, node.protocol));
                 if node.protocol == pyisy.constants.PROTO_GROUP:
                     # TODO: Should this be a Hue Scene?
-                    self.type = "On/off light"
+                    # We assume scenes are dimmable
+                    self.type = "Dimmable light"
+                    self.is_scene = True
+                    self.set_scene = True
                 else:
                     if node.dimmable is True:
                         self.type = "Dimmable light"
                         self.dimmable = True
                     else:
                         self.type = "On/off light"
+                    # These node types can not be directly controled, so control the scene
+                    # nodeDefId="KeypadButton_ADV"
+                    if node.type == '1.66.69.0':
+                        self.control_device = self.scene
+                        self.set_scene = True
                 self.xy      = False
                 self.ct      = False
                 self.bri     = 0
@@ -283,6 +295,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                     LOGGER.warning('%s status=%s, changing to 0' % (self.name, self.node.status));
                     self.bri = 0
                 else:
+                    # TODO: if it's a scene, calculate the on level?
                     self.bri = int(self.node.status)
                 if int(self.bri) == 0:
                     self.on  = "false"
@@ -316,7 +329,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # Only set directly on the node when it's dimmable and value is not 0 or 255
                 # 06/21/2020: changed to allow passing 255 value.
                 # TODO: But should we also check if dimmable?
-                if value > 0:
+                if value > 0 and not self.set_scene:
                         if self.dimmable:
                             # val=bri does not work?
                             ret = self.node.turn_on(value)
