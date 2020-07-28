@@ -329,15 +329,22 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 # Only set directly on the node when it's dimmable and value is not 0 or 255
                 # 06/21/2020: changed to allow passing 255 value.
                 # TODO: But should we also check if dimmable?
-                if value > 0 and not self.set_scene:
-                        if self.dimmable:
-                            # val=bri does not work?
-                            ret = self.node.turn_on(value)
-                        else:
-                            # val > 254, so just turn on.  This fixes defines that are not dimmable
-                            # like kpl buttons which can't be controlled directly.
+                if value > 0:
+                        if self.set_scene:
+                            LOGGER.info('{} node.set_on()'.format(self.name));
                             ret = self.set_on()
-                        LOGGER.info('{} node.turn_on({}) = {}'.format(self.name, value, ret));
+                            # TODO: Calculat brightness from scene members?
+                            self.bri = 255
+                        else:
+                            if self.dimmable:
+                                # val=bri does not work?
+                                LOGGER.info('{} node.turn_on({}) = {}'.format(self.name, value, ret));
+                                ret = self.node.turn_on(value)
+                            else:
+                                # val > 254, so just turn on.  This fixes defines that are not dimmable
+                                # like kpl buttons which can't be controlled directly.
+                                LOGGER.info('{} node.set_on()'.format(self.name));
+                                ret = self.set_on()
                 else:
                         ret = self.set_off()
                         self.bri = 0
