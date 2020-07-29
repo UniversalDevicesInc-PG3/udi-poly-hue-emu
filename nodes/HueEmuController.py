@@ -7,6 +7,7 @@ from polyinterface import Controller,LOGGER,LOG_HANDLER
 import sys
 import time
 import logging
+import pyisy
 from ISYHueEmu import ISYHueEmu
 from traceback import format_exception
 from threading import Thread
