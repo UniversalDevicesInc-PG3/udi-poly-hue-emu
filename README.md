@@ -67,6 +67,13 @@ followed by a few other lines about the device.
 
 Also, in the nodeserver directory there will be a config.json that contains the devices it found
 
+## Device Type
+
+There is currently no way to accurately determine if a device is Dimmable using the PyISY library.  So if the Spoken is put on a device we make an attempt to figure that out.  Currently it is a hack that user the PyISY dimmable method, which is not accurate, and removes KPL buttons.  If you look on the Polyglot Configuration page for this Node Server you will see a couple under "Hue" called "Type", this determines if the device is dimmable or not.  These are the Hue device types and currently on support.
+  - On/off Light
+  - Dimmable Light
+So if your device is not being shown correctly then please let me know what the NoideDefId by posting in the Forum [Polyglot V2 Hue Hub Emulator Nodeserver SubForum](https://forum.universal-devices.com/forum/147-polyglot-v2-hue-hub-emulator-nodeserver/)
+
 ## TODO
 
 - Move device info Custom Configuration Paramaters instead of config.json
@@ -90,6 +97,9 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.2.4 07/28/2020
+  - https://github.com/jimboca/udi-poly-hue-emu/issues/9
+  - See Device Type Section above
 - 2.2.3 07/07/2020
   - Fixed reference to dimmable which caused a crash
 - 2.2.2 07/08/2020
