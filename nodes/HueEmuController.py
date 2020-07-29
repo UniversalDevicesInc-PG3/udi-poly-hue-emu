@@ -115,7 +115,9 @@ class HueEmuController(Controller):
         if self.isy_hue_emu is not False:
             for i, device in enumerate(self.isy_hue_emu.pdevices):
                 # Only used for debug
-                if device.protocol == pyisy.constants.PROTO_GROUP:
+                if device is False:
+                    dtype = 'None'
+                elif device.protocol == pyisy.constants.PROTO_GROUP:
                     dtype = 'Scene'
                 else:
                     dtype = device.node.type
