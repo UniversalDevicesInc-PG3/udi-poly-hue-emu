@@ -256,14 +256,15 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.set_scene = False
                 # By default we control the main node, which can be a scene
                 self.control_device = self.node
-                LOGGER.info('name=%s node=%s node.type=%s scene=%s protocol=%s' % (self.name, self.node, self.node.type, self.scene, node.protocol));
                 if node.protocol == pyisy.constants.PROTO_GROUP:
+                    LOGGER.info('name=%s node=%s scene=%s protocol=%s' % (self.name, self.node, self.scene, node.protocol));
                     # TODO: Should this be a Hue Scene?
                     # We assume scenes are dimmable
                     self.type = "Dimmable light"
                     self.is_scene = True
                     self.set_scene = True
                 else:
+                    LOGGER.info('name=%s node=%s node.type=%s scene=%s protocol=%s' % (self.name, self.node, self.node.type, self.scene, node.protocol));
                     if node.dimmable is True:
                         self.type = "Dimmable light"
                         self.dimmable = True
