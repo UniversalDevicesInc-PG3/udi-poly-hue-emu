@@ -115,14 +115,18 @@ class HueEmuController(Controller):
         if self.isy_hue_emu is not False:
             for i, device in enumerate(self.isy_hue_emu.pdevices):
                 # Only used for debug
+                if device.protocol == pyisy.constants.PROTO_GROUP:
+                    dtype = 'Scene'
+                else:
+                    dtype = device.node.type
                 if device is False:
                     self.config_info.append('<tr><td>{}<td colspan=9>empty</tr>'.format(i))
                 elif device.scene is False:
                     self.config_info.append('<tr><td>{}<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td colspan=2>&nbsp;None&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;</tr>'.
-                    format(i,device.id,device.node,device.node.type,device.node.name,device.name,device.on,device.bri))
+                    format(i,device.id,device.node,dtype,device.node.name,device.name,device.on,device.bri))
                 else:
                     self.config_info.append('<tr><td>&nbsp;{}&nbsp;<td>{}<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;<td>&nbsp;{}&nbsp;</tr>'.
-                    format(i,device.id,device.node,device.node.type,device.node.name,device.scene,device.scene.name,device.name,device.on,device.bri))
+                    format(i,device.id,device.node,dtype,device.node.name,device.scene,device.scene.name,device.name,device.on,device.bri))
         self.config_info.append('</table>')
         s = "\n"
         cstr = s.join(self.config_info)
