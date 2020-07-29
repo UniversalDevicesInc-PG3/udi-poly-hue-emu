@@ -112,7 +112,7 @@ class HueEmuController(Controller):
         'This table is refreshed during short poll, so it may be out of date for a few seconds<br>',
         '<table border=1>',
         '<tr><th rowspan=2><center>HueId<th rowspan=2><center>NSId<th colspan=2><center>Property Node/Scene<th colspan=3><center>Scene<th rowspan=2><center>Spoken<th rowspan=2><center>On<th rowspan=2><center>Bri</tr>',
-        '<tr><th><center>Id<th><center>Type<th><center>Name<th><center>Scene<th><center>Name<th></tr>']
+        '<tr><th><center>Id<th><center>NodeDefId<th><center>Name<th><center>Scene<th><center>Name<th></tr>']
         if self.isy_hue_emu is not False:
             for i, device in enumerate(self.isy_hue_emu.pdevices):
                 # Only used for debug
@@ -121,7 +121,7 @@ class HueEmuController(Controller):
                 elif device.node.protocol == pyisy.constants.PROTO_GROUP:
                     dtype = 'Scene'
                 else:
-                    dtype = device.node.type
+                    dtype = device.node.node_def_id
                 if device is False:
                     self.config_info.append('<tr><td>{}<td colspan=9>empty</tr>'.format(i))
                 elif device.scene is False:

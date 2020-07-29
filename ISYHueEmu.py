@@ -272,7 +272,8 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                         self.type = "On/off light"
                     # These node types can not be directly controled, so control the scene
                     # nodeDefId="KeypadButton_ADV"
-                    if node.type == '1.66.69.0':
+                    #if node.type == '1.66.69.0':
+                    if node.node_def_id == "KeypadButton_ADV":
                         self.control_device = self.scene
                         self.set_scene = True
                 self.xy      = False
