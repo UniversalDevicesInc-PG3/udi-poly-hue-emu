@@ -270,7 +270,6 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                     LOGGER.info('name=%s node=%s node.type=%s node.dimmable=%s scene=%s protocol=%s' % (self.name, self.node, self.node.type, self.node.dimmable, self.scene, node.protocol))
                     if node.dimmable is True:
                         # Not All KPL buttons!
-                        match =
                         LOGGER.info('kpl_sub {} match={}'.format(self.node.address,match))
                         if kpl_sub.match(self.node.address) is None:
                             self.type = "Dimmable light"

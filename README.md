@@ -69,15 +69,16 @@ Also, in the nodeserver directory there will be a config.json that contains the 
 
 ## Device Type
 
-There is currently no way to accurately determine if a device is Dimmable using the PyISY library.  So if the Spoken is put on a device we make an attempt to figure that out.  Currently it is a hack that user the PyISY dimmable method, which is not accurate, and removes KPL buttons.  If you look on the Polyglot Configuration page for this Node Server you will see a couple under "Hue" called "Type", this determines if the device is dimmable or not.  These are the Hue device types and currently on support.
+The PyISY library currently returns dimmable for some devices that are not dimmable, like the sub buttons of a KPL. We have fixed that specific issue, but if others popup we can add exceptions for them.
+If you look on the Polyglot Configuration page for this Node Server you will see a table and in the Hue Type column shows what we use for the Hue device types and currently only support.
   - On/off Light
   - Dimmable Light
-So if your device is not being shown correctly then please let me know what the NoideDefId by posting in the Forum [Polyglot V2 Hue Hub Emulator Nodeserver SubForum](https://forum.universal-devices.com/forum/147-polyglot-v2-hue-hub-emulator-nodeserver/)
+So if your device is not being shown correctly then please let me know what the Node address by posting in the Forum [Polyglot V2 Hue Hub Emulator Nodeserver SubForum](https://forum.universal-devices.com/forum/147-polyglot-v2-hue-hub-emulator-nodeserver/) and I may also ask to enable Debug logging mode, restart the node server and send me the log package.
 
 ## TODO
 
 - Move device info Custom Configuration Paramaters instead of config.json
-- Test bright/dim scenes
+- Support scenes as hue scenes?
 
 ## Requirements
 
@@ -97,6 +98,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.2.5 07/31/2020
+  - Better fix for https://github.com/jimboca/udi-poly-hue-emu/issues/9 which allows main KPL button to be dimmable, but not the sub buttons
 - 2.2.4 07/28/2020
   - https://github.com/jimboca/udi-poly-hue-emu/issues/9
   - See Device Type Section above
