@@ -8,6 +8,7 @@
 import json,os
 
 import sys
+import re
 import pyisy
 import shutil
 import logging
