@@ -271,7 +271,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                     if node.dimmable is True:
                         # Not All KPL buttons!
                         match = kpl_sub.match(self.node.address)
-                        LOGGER.info('kpl_sub {} match=%s' % (self.node.address,match))
+                        LOGGER.info('kpl_sub {} match={}'.format(self.node.address,match))
                         if match:
                             self.type = "On/off light"
                         else:
