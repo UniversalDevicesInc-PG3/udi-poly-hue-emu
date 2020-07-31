@@ -262,7 +262,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 if node.protocol == pyisy.constants.PROTO_GROUP:
                     LOGGER.info('name=%s node=%s scene=%s protocol=%s' % (self.name, self.node, self.scene, node.protocol))
                     # TODO: Should this be a Hue Scene?
-                    # We assume scenes are dimmable
+                    # We assume scenes are dimmable, although we don't handle this properly yet...
                     self.type = "Dimmable light"
                     self.is_scene = True
                     self.set_scene = True
@@ -271,7 +271,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                     if node.dimmable is True:
                         # Not All KPL buttons!
                         match = kpl_sub.match(self.node.address)
-                        LOGGER.debug('kpl_sub match=%s' % (match))
+                        LOGGER.info('kpl_sub match=%s' % (match))
                         if match:
                             self.type = "On/off light"
                         else:
