@@ -254,35 +254,43 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.dimmable = False
                 self.is_scene = False
                 self.set_scene = False
+                # Matchs KPL buttons except the main one, since that is dimmable and the others are not.
+                kpl_sub = re.compile('^[0-9A-F]{2}\s[0-9A-F]{2}\s[0-9A-F]{2}\s[2-9]+')
                 # By default we control the main node, which can be a scene
                 self.control_device = self.node
                 if node.protocol == pyisy.constants.PROTO_GROUP:
-                    LOGGER.info('name=%s node=%s scene=%s protocol=%s' % (self.name, self.node, self.scene, node.protocol));
+                    LOGGER.info('name=%s node=%s scene=%s protocol=%s' % (self.name, self.node, self.scene, node.protocol))
                     # TODO: Should this be a Hue Scene?
                     # We assume scenes are dimmable
                     self.type = "Dimmable light"
                     self.is_scene = True
                     self.set_scene = True
                 else:
-                    LOGGER.info('name=%s node=%s node.type=%s scene=%s protocol=%s' % (self.name, self.node, self.node.type, self.scene, node.protocol));
+                    LOGGER.info('name=%s node=%s node.type=%s node.dimmable=%s scene=%s protocol=%s' % (self.name, self.node, self.node.type, self.node.dimmable, self.scene, node.protocol))
                     if node.dimmable is True:
-                        self.type = "Dimmable light"
-                        self.dimmable = True
+                        # Not All KPL buttons!
+                        match = kpl_sub.match(self.node.address)
+                        LOGGER.debug('kpl_sub match=%s' % (match))
+                        if match:
+                            self.type = "On/off light"
+                        else:
+                            self.type = "Dimmable light"
+                            self.dimmable = True
                     else:
                         self.type = "On/off light"
                     # These node types can not be directly controled, so control the scene
                     # nodeDefId="KeypadButton_ADV"
                     #if node.type == '1.66.69.0':
-                    if node.node_def_id == "KeypadButton_ADV" or node.node_def_id == "RelayLampSwitch_ADV":
-                        self.control_device = self.scene
-                        self.set_scene = True
-                        self.type = "On/off Light"
+                    #if node.node_def_id == "KeypadButton_ADV" or node.node_def_id == "RelayLampSwitch_ADV":
+                    #    self.control_device = self.scene
+                    #    self.set_scene = True
+                    #    self.type = "On/off Light"
                 self.xy      = False
                 self.ct      = False
                 self.bri     = 0
                 self.on      = "false"
                 node.status_events.subscribe(self.get_all_changed)
-                LOGGER.info('name=%s node=%s scene=%s type=%s dimmable=%s' % (self.name, self.node, self.scene, self.type, self.dimmable));
+                LOGGER.info('name=%s node=%s scene=%s type=%s dimmable=%s' % (self.name, self.node, self.scene, self.type, self.dimmable))
                 super(pyhue_isy_node_handler,self).__init__(name)
 
         def get_all_changed(self,e):
@@ -290,7 +298,7 @@ class pyhue_isy_node_handler(hue_upnp_super_handler):
                 self.get_all()
 
         def get_all(self):
-                LOGGER.info('%s status=%s' % (self.name, self.node.status));
+                LOGGER.info('%s status=%s' % (self.name, self.node.status))
                 # Set all the defaults
                 super(pyhue_isy_node_handler,self).get_all()
                 # node.status will be 0-255
