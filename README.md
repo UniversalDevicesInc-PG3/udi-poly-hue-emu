@@ -98,6 +98,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.2.6 07/31/2020
+  - Fix error in 2.2.5 causing a crash
 - 2.2.5 07/31/2020
   - Better fix for https://github.com/jimboca/udi-poly-hue-emu/issues/9 which allows main KPL button to be dimmable, but not the sub buttons
 - 2.2.4 07/28/2020
