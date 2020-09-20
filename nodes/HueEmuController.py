@@ -26,6 +26,7 @@ class HueEmuController(Controller):
         self.sent_cstr = ""
         self.thread = None
         self.hb = 0
+        self.listen_cnt = HueEmuController.LISTEN_TIMEOUT
 
     def start(self):
         LOGGER.info('Starting')
