@@ -296,7 +296,7 @@ class HueEmuController(Controller):
                 self.isy_hue_emu.stop_listener()
             else:
                 self.isy_hue_emu.start_listener()
-        self.listen_cnt = HueEmuController.LISTEN_TIMEOUT
+                self.listen_cnt = HueEmuController.LISTEN_TIMEOUT
         self.setDriver('GV2', val)
 
     def set_isy_connected(self,val=None):
