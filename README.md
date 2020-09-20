@@ -98,6 +98,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.2.7 09/20/2020
+  - Fix bug that kept resetting listen count to 5, even though it wasn't really listening.
 - 2.2.6 07/31/2020
   - Fix error in 2.2.5 causing a crash
 - 2.2.5 07/31/2020
