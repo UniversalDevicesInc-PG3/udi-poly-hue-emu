@@ -98,6 +98,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.2.9 12/06/2020
+  - Fix for arugment change in PyISY 2.1.0
 - 2.2.8 09/20/2020
   - Fix bug that kept resetting listen count to 5, even though it wasn't really listening.
 - 2.2.6 07/31/2020

@@ -52,7 +52,7 @@ class ISYHueEmu():
             cnt += 1
             LOGGER.debug('ISY connect try %d' % (cnt))
             try:
-                self.isy = pyisy.ISY(self.isy_host, self.isy_port, self.isy_user, self.isy_password, False, 1.1, LOGGER)
+                self.isy = pyisy.ISY(self.isy_host, self.isy_port, self.isy_user, self.isy_password, False, 1.1, "")
                 done = True
             except Exception as ex:
                 # Can any other exception happen?
