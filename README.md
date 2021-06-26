@@ -98,6 +98,8 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 2.2.10: 06/25/2021
+  - Update pyisy to 2.1.1
 - 2.2.9 12/06/2020
   - Fix for arugment change in PyISY 2.1.0
 - 2.2.8 09/20/2020

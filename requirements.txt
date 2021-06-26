@@ -1,2 +1,2 @@
 polyinterface >= 2.1.0
-pyisy == 2.1.0
+pyisy == 2.1.1
