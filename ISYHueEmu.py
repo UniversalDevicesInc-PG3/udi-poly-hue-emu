@@ -78,11 +78,11 @@ class ISYHueEmu():
         #
         # Now start up the hue_upnp...
         #
-        LOGGER.info('Default config: {}'.format(hueUpnp_config))
         hueUpnp_config.devices = self.pdevices
         hueUpnp_config.standard['IP']        = self.host
-        hueUpnp_config.standard['PORT']      = self.port
+        hueUpnp_config.standard['HTTP_PORT'] = int(self.port)
         hueUpnp_config.standard['DEBUG']     = True
+        LOGGER.info('My config: IP={} HTTP_PORT={} DEBUG={}'.format(hueUpnp_config.standard['IP'],hueUpnp_config.standard['HTTP_PORT'],hueUpnp_config.standard['DEBUG']))
         self.hue_upnp = hue_upnp(hueUpnp_config)
         self.listening = listen
         self.hue_upnp.run(listen=listen)
