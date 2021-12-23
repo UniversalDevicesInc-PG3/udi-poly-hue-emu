@@ -241,6 +241,7 @@ class HueEmuController(Controller):
 
     def set_module_logs(self,level):
         logging.getLogger('urllib3').setLevel(level)
+        logging.getLogger('pyisy').setLevel(level)
 
     def set_debug_level(self,level):
         LOGGER.info(str(level))
