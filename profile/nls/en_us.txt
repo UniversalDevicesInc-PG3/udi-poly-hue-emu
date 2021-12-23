@@ -10,6 +10,7 @@ ST-ctl-GV2-NAME = Listen
 
 CMD-SET_DEBUGMODE-NAME = Debug Level
 CDM-0 = All
+CDM-5 = Debug + Verbose Modules
 CDM-9 = Debug + Modules
 CDM-10 = Debug
 CDM-20 = Info

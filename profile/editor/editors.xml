@@ -5,6 +5,6 @@
     </editor>
     <!-- Log Debug Mode -->
     <editor id="DEBUGMODE">
-      <range uom="25" subset="0,9,10,20,30,40,50" nls="CDM" />
+      <range uom="25" subset="0,5,9,10,20,30,40,50" nls="CDM" />
     </editor>
   </editors>

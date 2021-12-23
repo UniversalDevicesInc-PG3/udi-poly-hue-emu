@@ -271,7 +271,7 @@ class HueEmuController(Controller):
         # this is the best way to control logging for modules, so you can
         # still see warnings and errors
         if level < 10:
-            self.set_module_logs(logging.DEBUG)
+            self.set_module_logs(level)
         else:
             # Just warnigns for the modules unless in module debug mode
             self.set_module_logs(logging.WARNING)
