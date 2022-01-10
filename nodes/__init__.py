@@ -1,6 +1,6 @@
 
 """ Node classes used by the Hue Emulator Node Server. """
 
-import sys,polyinterface
+import sys
 
-from .HueEmuController         import HueEmuController
+from .Controller         import Controller

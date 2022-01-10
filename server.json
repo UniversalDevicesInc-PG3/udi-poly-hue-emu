@@ -1,22 +1,32 @@
 {
     "name": "HueEmulator",
-    "docs": "https://github.com/Einstein42/udi-poly-hue-emu",
+    "docs": "https://github.com/jimboca/udi-poly-notification-V2/README.md",
     "type": "python3",
     "executable": "hue-emu-poly.py",
     "install": "install.sh",
     "description": "Hue Emulator Node Server",
     "notice": "Your disclaimer here",
+    "persist_folder": "config",
+    "logLevel": "DEBUG",
     "shortPoll": "5",
     "longPoll": "60",
-    "profile_version": null,
+    "discover": true,
+	"customParams": {
+        "hue_port": "8080",
+        "isy_host": "your_isy_host_or_ipaddress",
+        "isy_port": "80",
+        "isy_user": "admin",
+        "isy_password": "your_isy_admin_user_password"
+    },
+    "profile_version": "3.0.0",
     "credits": [
         {
             "title": "hue-emu: A NodeServer for Emulating a Hue Hub of ISY Devices",
             "author": "JimBoCA",
-            "version": "2.2.12",
+            "version": "3.0.0",
             "date": "June 17, 2018",
-            "source": "https://github.com/jimboca/udi-poly-hue-emu-python",
-            "license": "https://raw.githubusercontent.com/Einstein42/udi-poly-template-python/master/LICENSE"
+            "source": "https://github.com/jimboca/udi-poly-notification-V2",
+            "license": "https://raw.githubusercontent.com/https://github.com/jimboca/udi-poly-notification-V2/master/LICENSE"
         }
     ]
 }

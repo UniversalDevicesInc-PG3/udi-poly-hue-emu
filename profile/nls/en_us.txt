@@ -19,3 +19,8 @@ CDM-40 = Error
 CDM-50 = Critical
 
 CMD-SET_LISTEN-NAME = Listen
+
+# Controller Status
+CST-0 = Disconnected
+CST-1 = Connected
+CST-2 = Failed

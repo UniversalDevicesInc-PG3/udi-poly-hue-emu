@@ -87,6 +87,11 @@ class ISYHueEmu():
         self.listening = listen
         self.hue_upnp.run(listen=listen)
 
+    def stop(self):
+        self.hue_upnp.stop()
+        if self.isy.connected and self.isy.auto_update:
+            isy.auto_update = False
+
     def start_listener(self):
         if self.hue_upnp is not False:
             self.hue_upnp.start_listener()

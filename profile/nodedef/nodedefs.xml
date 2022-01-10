@@ -4,11 +4,9 @@
     <nodeDef id="controller" nls="ctl">
         <editors />
         <sts>
-		    	<st id="ST" editor="bool" />
+		    	<st id="ST" editor="cst" />
           <!-- ISY Connected -->
           <st id="GV0" editor="bool" />
-          <!-- Debug Mode -->
-          <st id="GV1" editor="DEBUGMODE" />
           <!-- Listen -->
           <st id="GV2" editor="bool" />
     		</sts>
@@ -18,9 +16,6 @@
             <cmd id="DOF" />
           </sends>
           <accepts>
-            <cmd id="SET_DEBUGMODE">
-              <p id="" editor="DEBUGMODE" init="GV1" />
-            </cmd>
               <cmd id="SET_LISTEN">
                 <p id="" editor="bool" init="GV2" />
               </cmd>
