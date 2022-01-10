@@ -98,7 +98,7 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
-- 3.0.1: 01/09/2022
+- 3.0.2: 01/09/2022
   = First PG3 release, still using PyISY 2.x until PG3 supports 3.x
   - Make sure to restart on PG2 with 2.2.13 before moving to PG3
 - 2.2.12: 12/22/2021

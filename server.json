@@ -23,7 +23,7 @@
         {
             "title": "hue-emu: A NodeServer for Emulating a Hue Hub of ISY Devices",
             "author": "JimBoCA",
-            "version": "3.0.1",
+            "version": "3.0.2",
             "date": "June 17, 2018",
             "source": "https://github.com/jimboca/udi-poly-notification-V2",
             "license": "https://raw.githubusercontent.com/https://github.com/jimboca/udi-poly-notification-V2/master/LICENSE"
