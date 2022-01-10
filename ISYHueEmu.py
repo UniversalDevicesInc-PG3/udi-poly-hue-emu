@@ -36,7 +36,7 @@ class ISYHueEmu():
         self.pdevices  = []
         self.lpfx = 'pyhue:'
         self.listening = False
-        self.config_file = 'config.json'
+        self.config_file = 'config/config.json'
         self.hue_upnp     = False
         self.load_config()
 
