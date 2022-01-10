@@ -15,9 +15,10 @@ fi
 # But mine is the same with additional debugging
 #git clone https://github.com/jimboca/PyISY.git
 
-echo ""
-if [ -e hue-upnp ]; then
-  echo "Removing: hue-upnp"
-  rm -rf hue-upnp
-fi
-git clone -b python3 https://github.com/jimboca/hue-upnp.git
+# Not needed for PG3 because it's included in the zip file
+#echo ""
+#if [ -e hue-upnp ]; then
+#  echo "Removing: hue-upnp"
+#  rm -rf hue-upnp
+#fi
+#git clone -b python3 https://github.com/jimboca/hue-upnp.git
