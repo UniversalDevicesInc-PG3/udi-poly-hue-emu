@@ -35,7 +35,24 @@ IMPORTANT: Currently if you 'group device' it will not find your Spoken property
 3. Once it installs you should see a new node 'Hue Emulator Controller'
    * If you don't see that node, then restart the node server from the Polyglot UI.
 4. Set the Configuration as described in the next section.
-5. Restart the nodeserver after all params are saved.
+
+### Upgrade from PG2
+  
+  If you are upgrading to PG2 first make sure the version you are running on PG2 is 2.2.13 and you have restarted after installing that version.
+  
+  The bast way to upgrade is to backup PG2 and restore that on PG3, but if you want to upgrade manually do the steps above, then stop the nodeserver and manually copy the configuration.
+    - Log into your Polisy with your prefered terminal program
+    - cd /var/polyglot/pg3/ns/uuid_n/config
+      - uuid will be your Polsiy UUID
+      - n is the slot number for this nodeserver
+    - If PG2 is running on your Polisy:
+      - sudo -u polyglot cp /var/polyglot/nodeservers/HueEmulator/config/config.json config.json
+    - If PG2 is running on another machine
+      - sudo -u polyglot scp username@hostname:/var/polyglot/nodeservers/HueEmulator/config/config.json config.json
+        - Where username is the username on the machine running PG2
+        - and hostname is the host running PG2
+
+  If you don't do this, then all the devices will still be available as before, but may have different reference numbers so you will have to reprogram any device, like a HarmonyHub to reference those devices.
 
 ## Configuration
 
@@ -98,6 +115,9 @@ Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEm
 
 # Release Notes
 
+- 3.0.3: 01/10/2022
+  - Fix for LOGGER levels
+  - Added PG2 upgrade information
 - 3.0.2: 01/09/2022
   = First PG3 release, still using PyISY 2.x until PG3 supports 3.x
   - Make sure to restart on PG2 with 2.2.13 before moving to PG3

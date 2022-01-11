@@ -259,11 +259,12 @@ class Controller(Node):
         if level['level'] < 10:
             LOGGER.info("Setting basic config to DEBUG...")
             LOG_HANDLER.set_basic_config(True,logging.DEBUG)
-            logging.getLogger('hueUpnp').setLevel(level['level'])
-            logging.getLogger('ISYHueEmu').setLevel(level['level'])
         else:
             LOGGER.info("Setting basic config to WARNING...")
             LOG_HANDLER.set_basic_config(True,logging.WARNING)
+        # Always use the requested level for these two
+        logging.getLogger('hueUpnp').setLevel(level['level'])
+        logging.getLogger('ISYHueEmu').setLevel(level['level'])
         LOGGER.info(f'exit:')
 
     def get_listen(self):
