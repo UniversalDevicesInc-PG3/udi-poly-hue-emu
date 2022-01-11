@@ -112,7 +112,7 @@ So if your device is not being shown correctly then please let me know what the 
 # Upgrading
 
 With PG3 just restarting the nodeserver will do the upgrade if necessary.  But currently this will delete the config file so you must save it first then copy it back:
-- sudo -u cp config.json 00\:21\:b9\:00\:f8\:c8_6/config/
+- sudo -u polyglot cp 00\:21\:b9\:00\:f8\:c8_6/config/config.json .
 - Restart NS
 - Wait for it to startup 
 - Stop it
