@@ -111,7 +111,13 @@ So if your device is not being shown correctly then please let me know what the 
 
 # Upgrading
 
-Open the Polyglot web page, go to nodeserver store and click "Update" for "HueEmulator". You can answer No to the install profile question.  Then restart the nodeserver by selecting it in the Polyglot dashboard and select Control -> Restart, and watch the log to make sure everything goes well.
+With PG3 just restarting the nodeserver will do the upgrade if necessary.  But currently this will delete the config file so you must save it first then copy it back:
+- sudo -u cp config.json 00\:21\:b9\:00\:f8\:c8_6/config/
+- Restart NS
+- Wait for it to startup 
+- Stop it
+- sudo -u polyglot cp config.json 00\:21\:b9\:00\:f8\:c8_6/config/
+- Start it
 
 # Release Notes
 
