@@ -4,17 +4,51 @@
 
 # udi-poly-hue-emu
 
-This is the Hue Emulator Poly for the [Universal Devices ISY994i](https://www.universal-devices.com/residential/ISY) [Polyglot interface](http://www.universal-devices.com/developers/polyglot/docs/) with  [Polyglot V2](https://github.com/Einstein42/udi-polyglotv2)
+This is the Hue Emulator Poly for the [Universal Devices Polisy](https://www.universal-devices.com) [Polyglot interface](http://www.universal-devices.com/developers/polyglot/docs/) with [Polyglot Version 3 (PG3)](https://github.com/UniversalDevicesInc/pg3)
+
 (c) JimBoCA aka Jim Searle
 MIT license.
 
-This node server is intended to allow controlling ISY994 devices from other devices that support a Hue Hub.  So devices like a Harmony Hub can control ISY devices or scenes.  The Harmony Elite remote has dedicated home control buttons which work very well with this setup.  It also should work to control devices with Amazon Alexa, but I no longer use Alexa so I can not support it.  The Google home no longer works with local Hue hubs, so that isn't supported either.
-
-Previously this functionality was available in [ISYHelper](https://github.com/jimboca/ISYHelper) but all ISYHelper functions have been moved to nodeservers.
+This node server is make it possible to control ISY994 devices from other devices that support a Hue Hub.  So devices like a Harmony Hub can control ISY devices or scenes.  The Harmony Elite remote has dedicated home control buttons which work very well with this setup.  It also should work to control devices with Amazon Alexa, but I no longer use Alexa so I can not support it.  The Google home no longer works with local Hue hubs, so that isn't supported either.
 
 It uses the [PyISY Library](https://pypi.python.org/pypi/PyISY) to connect to the ISY and control devices, and the [Python Hue Hub Emulator](https://github.com/falk0069/hue-upnp) to emulate a Hue Hub.
 
 This version remembers the devices previous hue id so they should not ever change.
+
+## Help
+
+If you have any issues are questions you can ask on [PG3 HueEmulator SubForum](https://forum.universal-devices.com/forum/312-hueemulator/) or report an issue at [PG3 Kasa Github issues](https://github.com/UniversalDevicesInc-PG3/udi-poly-hue-emu/issues).
+
+## Moving from PG2
+  
+IMPORTANT: If you are upgrading to PG2 first make sure the version you are running on PG2 is 2.2.13 and you have restarted after installing that version.
+
+There are a few ways to move.
+
+### Backup and Restore
+
+The best way to move from PG2 to PG3 is to backup on PG2 and restore on PG3, but the only option is to do all your nodeservers at once.  I don't have much information on this method, if you have questions please ask on the PG3 forum.
+
+### Manual
+
+If you can't or don't want backup/restore then you can delete the NS on PG2 and install on the same slot on PG3.  But, this may result in the devices getting different Hue ID's so you will have to go to any devices that references this emulator and manually fix them.
+
+After it is installed, stop the nodeserver and manually copy the configuration.
+  - Log into your Polisy with your prefered terminal program
+  - cd /var/polyglot/pg3/ns/uuid_n/config
+    - uuid will be your Polsiy UUID
+    - n is the slot number for this nodeserver
+  - If PG2 is running on your Polisy:
+    - sudo -u polyglot cp /var/polyglot/nodeservers/HueEmulator/config/config.json config.json
+  - If PG2 is running on another machine
+    - sudo -u polyglot scp username@hostname:/var/polyglot/nodeservers/HueEmulator/config/config.json config.json
+      - Where username is the username on the machine running PG2
+      - and hostname is the host running PG2
+
+### Add then delete
+
+Another option is to install in a new slot then go edit all your programs and scenes that reference the nodes and switch to the new slots. 
+
 
 ## Setup
 
@@ -35,24 +69,6 @@ IMPORTANT: Currently if you 'group device' it will not find your Spoken property
 3. Once it installs you should see a new node 'Hue Emulator Controller'
    * If you don't see that node, then restart the node server from the Polyglot UI.
 4. Set the Configuration as described in the next section.
-
-### Upgrade from PG2
-  
-  If you are upgrading to PG2 first make sure the version you are running on PG2 is 2.2.13 and you have restarted after installing that version.
-  
-  The bast way to upgrade is to backup PG2 and restore that on PG3, but if you want to upgrade manually do the steps above, then stop the nodeserver and manually copy the configuration.
-    - Log into your Polisy with your prefered terminal program
-    - cd /var/polyglot/pg3/ns/uuid_n/config
-      - uuid will be your Polsiy UUID
-      - n is the slot number for this nodeserver
-    - If PG2 is running on your Polisy:
-      - sudo -u polyglot cp /var/polyglot/nodeservers/HueEmulator/config/config.json config.json
-    - If PG2 is running on another machine
-      - sudo -u polyglot scp username@hostname:/var/polyglot/nodeservers/HueEmulator/config/config.json config.json
-        - Where username is the username on the machine running PG2
-        - and hostname is the host running PG2
-
-  If you don't do this, then all the devices will still be available as before, but may have different reference numbers so you will have to reprogram any device, like a HarmonyHub to reference those devices.
 
 ## Configuration
 
