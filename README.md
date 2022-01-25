@@ -21,7 +21,9 @@ If you have any issues are questions you can ask on [PG3 HueEmulator SubForum](h
 
 ## Moving from PG2
   
-IMPORTANT: If you are upgrading to PG2 first make sure the version you are running on PG2 is 2.2.13 and you have restarted after installing that version.
+IMPORTANT: 
+- If you are upgrading to PG2 first make sure the version you are running on PG2 is 2.2.13 and you have restarted after installing that version.
+- Make sure your PG3 version is at least 3.0.38
 
 There are a few ways to move.
 
