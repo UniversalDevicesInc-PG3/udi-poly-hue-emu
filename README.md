@@ -140,7 +140,7 @@ With PG3 just restarting the nodeserver will do the upgrade if necessary.  But c
 # Release Notes
 
 - 3.0.4: 02/03/2022
-  - pyisy >= 2.1.3
+  - pyisy >= 2.1.3 which fixes issues with ISY subscriptions not being closed properly
 - 3.0.3: 01/10/2022
   - Fix for LOGGER levels
   - Added PG2 upgrade information
