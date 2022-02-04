@@ -1,2 +1,2 @@
 udi_interface>=3.0.31
-pyisy == 2.1.2
+pyisy >= 2.1.3
