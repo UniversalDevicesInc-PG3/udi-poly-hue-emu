@@ -129,16 +129,11 @@ So if your device is not being shown correctly then please let me know what the 
 
 # Upgrading
 
-With PG3 just restarting the nodeserver will do the upgrade if necessary.  But currently this will delete the config file so you must save it first then copy it back:
-- sudo -u polyglot cp 00\:21\:b9\:00\:f8\:c8_6/config/config.json .
-- Restart NS
-- Wait for it to startup 
-- Stop it
-- sudo -u polyglot cp config.json 00\:21\:b9\:00\:f8\:c8_6/config/
-- Start it
+With PG3 just restarting the nodeserver will do the upgrade if necessary.
 
 # Release Notes
-
+- 3.0.5: 02/04/2022
+  - Fix profile issues
 - 3.0.4: 02/03/2022
   - pyisy >= 2.1.3 which fixes issues with ISY subscriptions not being closed properly
 - 3.0.3: 01/10/2022
