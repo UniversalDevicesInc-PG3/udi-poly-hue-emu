@@ -127,6 +127,7 @@ class Controller(Node):
         LOGGER.info("Stopping")
         self.stop_thread()
         LOGGER.info('NodeServer stopped.')
+        self.poly.stop()
 
     def refresh(self, *args, **kwargs):
         LOGGER.info('')
