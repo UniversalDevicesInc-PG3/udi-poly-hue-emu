@@ -219,9 +219,9 @@ class Controller(Node):
         st = True
 
         params = {
-            'hue_port': '8080',
+            'hue_port': '8081',
             'isy_host': "your_isy_host_or_ipaddress",
-            'isy_port': '80',
+            'isy_port': '8080',
             'isy_user': 'admin',
             'isy_password': 'your_isy_admin_user_password'
         }

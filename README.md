@@ -132,6 +132,8 @@ So if your device is not being shown correctly then please let me know what the 
 With PG3 just restarting the nodeserver will do the upgrade if necessary.
 
 # Release Notes
+- 3.0.6: 03/07/2022
+  - Upgrade to latest PyISY 2.1.4 and udi_interface, this should resolve the subscription errors seen by others, like with UD Mobile and failing to open the Admin Console
 - 3.0.5: 02/04/2022
   - Fix profile issues
 - 3.0.4: 02/03/2022
